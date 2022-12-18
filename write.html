@@ -11,12 +11,16 @@
 <title>메인페이지</title>
 </head>
 <style>
-body{
-    text-align: center;
-}
+nav > a{color: #fff;}
+
+main{width: 80%;margin: 0 auto;}
+main > *{width: 100%;}
+main > h4{margin: 20px auto;}
+main > button{width: 20%;}
 </style>
 <body>
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
+<!-- nav -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <a class="navbar-brand" href="#">Todo App</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -34,23 +38,24 @@ body{
         </li>
         </ul>
     </div>
-    </nav>
-<h4>안녕하세요 홈페이지입니다.</h4>
-<p>홈입니다.</p>
-<div class="alert alert-primary" role="alert">A simple primary alert—check it out!</div>
-<div class="alert alert-primary" role="alert">
-    A simple primary alert with
-    <a href="#" class="alert-link">an example link</a>
-    . Give it a click if you like.
-</div>
-<button type="button" class="btn btn-primary">Primary</button>
-<button type="button" class="btn btn-secondary">Secondary</button>
-<button type="button" class="btn btn-success">Success</button>
-<button type="button" class="btn btn-danger">Danger</button>
-<button type="button" class="btn btn-warning">Warning</button>
-<button type="button" class="btn btn-info">Info</button>
-<button type="button" class="btn btn-light">Light</button>
-<button type="button" class="btn btn-dark">Dark</button>
+</nav>
+<!-- main -->
+<main>
+<h4>기록해도 안할 거 알지만</h4>
+    <div class="todoFormBox">
+        <form>
+            <div class="form-group">
+                <label for="exampleFormControlInput1">오늘의 할일</label>
+                <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="오늘의 할일">
+            </div>
+            <div class="form-group">
+                <label for="exampleFormControlTextarea1">세부내용</label>
+                <textarea class="form-control" id="exampleFormControlTextarea1" placeholder="세부내용"></textarea>
+            </div>
+        </form>
+    </div>
+    <button type="button" class="btn btn-outline-dark">저장하기</button>
+</main>
 
 
 

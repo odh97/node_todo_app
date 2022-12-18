@@ -22,3 +22,7 @@ app.get('/beauty', function(request, response){
 app.get('/', function(request, response){
     response.sendFile(__dirname + '/index.html');
 });
+
+app.get('/write', function(request, response){
+    response.sendFile(__dirname + '/write.html');
+});
