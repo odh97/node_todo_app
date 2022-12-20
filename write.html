@@ -8,7 +8,7 @@
 <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-<title>메인페이지</title>
+<title>등록페이지</title>
 </head>
 <style>
 nav > a{color: #fff;}
@@ -16,7 +16,8 @@ nav > a{color: #fff;}
 main{width: 80%;margin: 0 auto;}
 main > *{width: 100%;}
 main > h4{margin: 20px auto;}
-main > button{width: 20%;}
+main form button{width: 30%;}
+
 </style>
 <body>
 <!-- nav -->
@@ -43,18 +44,18 @@ main > button{width: 20%;}
 <main>
 <h4>기록해도 안할 거 알지만</h4>
     <div class="todoFormBox">
-        <form>
+        <form action="/add" method="POST">
             <div class="form-group">
-                <label for="exampleFormControlInput1">오늘의 할일</label>
-                <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="오늘의 할일">
+                <label>오늘의 할일</label>
+                <input type="text" class="form-control" placeholder="오늘의 할일" name="title"/>
             </div>
             <div class="form-group">
-                <label for="exampleFormControlTextarea1">세부내용</label>
-                <textarea class="form-control" id="exampleFormControlTextarea1" placeholder="세부내용"></textarea>
+                <label>세부내용</label>
+                <textarea class="form-control" placeholder="세부내용" name="date"></textarea>
             </div>
+            <button type="submit" class="btn btn-outline-dark">저장하기</button>
         </form>
     </div>
-    <button type="button" class="btn btn-outline-dark">저장하기</button>
 </main>
 
 

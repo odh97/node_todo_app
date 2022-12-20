@@ -1,9 +1,22 @@
-const express = require('express');
-const app = express();
+const express = require('express')
+app.use(express.urlencoded({ extended: true }));
+const app = express()
 
-app.listen(8080, function(){
-    console.log("listening on 8080");
-});
+// mongodb+srv://zxdheogus1:<password>@cluster0.awi9wey.mongodb.net/?retryWrites=true&w=majority
+// db 비밀번호 : qwer1234
+
+const MongoClient = require('mongodb').MongoClient;
+
+//db 연동 실패 : 이유 찾자
+MongoClient.connect('mongodb+srv://zxdheogus1:qwer1234@cluster0.awi9wey.mongodb.net/?retryWrites=true&w=majority',
+function(에러, client){
+    if (에러) return console.log(에러)
+    app.listen(8080, function() {
+      console.log('listening on 8080')
+    })
+})
+
+
 
 //누군가가 /pet 으로 방문하면..
 //pet 관련된 안내문을 띄워주자
@@ -25,4 +38,28 @@ app.get('/', function(request, response){
 
 app.get('/write', function(request, response){
     response.sendFile(__dirname + '/write.html');
+});
+
+// REST API 참고
+/*
+
+1) 단어들을 동사보다는 명사 위주로 구성함
+2) 응용해서 다른 정보들을 쉽게 가져올 수 있을 정도로 일관성 있음 
+3) 대충 봐도 어떤 정보가 들어올지 예측이 가능함
+
+네이밍 tip
+1) 띄어쓰기는 언더바_대신 대시-기호-사용
+2) 파일 확장자 쓰지 말기 (.html 이런거)
+3) 하위 문서들을 뜻할 땐 / 기호를 사용함 (하위폴더같은 느낌)
+
+*/
+
+
+//post 요청
+app.post('/add', function(request, response){
+    response.send('전송완료');
+    console.log(request.body.title);
+    console.log(request.body.date);
+    //DB저장하기
+
 });
