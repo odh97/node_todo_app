@@ -1,10 +1,8 @@
 const express = require('express')
 const app = express()
 app.use(express.urlencoded({ extended: true }));
-
-// mongodb+srv://zxdheogus1:<password>@cluster0.awi9wey.mongodb.net/?retryWrites=true&w=majority
-// db 비밀번호 : qwer1234
 const MongoClient = require('mongodb').MongoClient;
+app.set('view engine', 'ejs');
 
 var db;
 MongoClient.connect('mongodb+srv://zxdheogus1:qwer1234@cluster0.awi9wey.mongodb.net/?retryWrites=true&w=majority',
@@ -62,27 +60,22 @@ app.get('/write', function(request, response){
 */
 
 
+//post 요청
+app.post('/add', function(request, response){
+    response.send('전송완료');
+    console.log(request.body.title);
+    console.log(request.body.date);
 
-MongoClient.connect('mongodb+srv://zxdheogus1:qwer1234@cluster0.awi9wey.mongodb.net/?retryWrites=true&w=majority',
-function(error, client){
-    //연결되면 할일
-    if (error) return console.log(error);
+    let day = new Date();
+    let today = day.toLocaleDateString();
 
-    //post 요청
-    app.post('/add', function(request, response){
-        response.send('전송완료');
-        console.log(request.body.title);
-        console.log(request.body.date);
-
-        let day = new Date();
-        let today = day.toLocaleDateString();
-
-
-        //DB저장하기
-        db = client.db('todoapp');
-        db.collection('post').insertOne( {제목 : request.body.title, 날짜 : today} , function(에러, 결과){
-            console.log('todoapp DB 저장완료');
-        });
-
+    //DB저장하기
+    db.collection('post').insertOne( {제목 : request.body.title, 날짜 : today}, function(에러, 결과){
+        console.log('todoapp DB 저장완료');
     });
+
+});
+
+app.get('/list', function(request, response){
+    response.render('list.ejs');
 });
