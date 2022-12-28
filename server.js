@@ -49,7 +49,7 @@ app.get('/write', function(request, response){
 /*
 
 1) 단어들을 동사보다는 명사 위주로 구성함
-2) 응용해서 다른 정보들을 쉽게 가져올 수 있을 정도로 일관성 있음 
+2) 응용해서 다른 정보들을 쉽게 가져올 수 있을 정도로 일관성 있음
 3) 대충 봐도 어떤 정보가 들어올지 예측이 가능함
 
 네이밍 tip
@@ -69,13 +69,35 @@ app.post('/add', function(request, response){
     let day = new Date();
     let today = day.toLocaleDateString();
 
-    //DB저장하기
-    db.collection('post').insertOne( {제목 : request.body.title, 날짜 : today}, function(에러, 결과){
-        console.log('todoapp DB 저장완료');
+    
+    // auto increment(자동으로 ID번호를 만들어주기)
+    db.collection('counter').findOne({name : '게시물 갯수'}, function(에러, 결과){
+        let totalPostNm = 결과.totalPost;
+
+        //DB저장하기
+        db.collection('post').insertOne( { _id : totalPostNm + 1, 제목 : request.body.title, 날짜 : today}, function(에러, 결과){
+            console.log('todoapp DB 저장완료');
+
+            //여러개 수정할때
+            //db.collection('counter').updateMany()
+            //하나 수정할때
+            // db.collection('counter').updateOne({변경할 데이터 정의},{수정값},function(){})
+            // { $set : {바꿀값} }
+            // { $inc : {기존값에 더해줄 값} }
+            db.collection('counter').updateOne({name : '게시물 갯수'},{ $inc : {totalPost:1} },function(){})
+        });
+
     });
+
+    
 
 });
 
 app.get('/list', function(request, response){
-    response.render('list.ejs');
+    //DB에 저장된 데이터 꺼내기
+    db.collection('post').find().toArray(function(에러, 결과){
+        console.log(결과);
+        response.render('list.ejs', { posts : 결과 });
+    });
+
 });
