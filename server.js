@@ -12,9 +12,6 @@ function(error, client){
 
     //DB 사용방법
     db = client.db('todoapp');
-    db.collection('post').insertOne( {이름 : 'John', _id : 100} , function(에러, 결과){
-        console.log('저장완료');
-    });
 
     app.listen(8080, function() {
         console.log('listening on 8080');
@@ -88,9 +85,6 @@ app.post('/add', function(request, response){
         });
 
     });
-
-    
-
 });
 
 app.get('/list', function(request, response){
@@ -100,4 +94,18 @@ app.get('/list', function(request, response){
         response.render('list.ejs', { posts : 결과 });
     });
 
+});
+
+app.delete('/delete', function(요청, 응답){
+    console.log(요청);
+    console.log(요청.body);
+
+    요청.body._id = parseInt(요청.body._id);
+
+    // DELETE
+    // db.collection('post').deleteOne({삭제할 데이터}, function(){});
+    db.collection('post').deleteOne(요청.body, function(에러, 결과){
+        console.log('DB post 데이터 삭제 완료');
+        응답.status(200).send({ message : '성공했습니다.' });
+    });
 });
