@@ -4,6 +4,8 @@ app.use(express.urlencoded({ extended: true }));
 const MongoClient = require('mongodb').MongoClient;
 app.set('view engine', 'ejs');
 
+app.use('/public', express.static('public'));
+
 var db;
 MongoClient.connect('mongodb+srv://zxdheogus1:qwer1234@cluster0.awi9wey.mongodb.net/?retryWrites=true&w=majority',
 function(error, client){
@@ -15,7 +17,7 @@ function(error, client){
 
     app.listen(8080, function() {
         console.log('listening on 8080');
-      });
+    });
 });
 
 
@@ -35,11 +37,13 @@ app.get('/beauty', function(request, response){
 
 //__dirname은 현재 파일의 경로를 뜻합니다.
 app.get('/', function(request, response){
-    response.sendFile(__dirname + '/index.html');
+    // response.sendFile(__dirname + '/index.html');
+    response.render('index.ejs');
 });
 
 app.get('/write', function(request, response){
-    response.sendFile(__dirname + '/write.html');
+    // response.sendFile(__dirname + '/write.html');
+    response.render('write.ejs');
 });
 
 // REST API 참고
@@ -110,11 +114,27 @@ app.delete('/delete', function(요청, 응답){
     });
 });
 
+
 app.get('/detail/:id', function(요청, 응답){
 
     //DB에 저장된 데이터 꺼내기
     db.collection('post').findOne({_id : parseInt(요청.params.id)},function(에러, 결과){
+        if (결과 === null) return 응답.send("404 페이지 입니다.");
         console.log(결과);
         응답.render('detail.ejs', { data : 결과 });
     });
 });
+
+app.get('/edit',function(요청, 응답){
+
+    //DB에 저장된 데이터 꺼내기
+    db.collection('post').findOne({_id : parseInt(요청.params.id)},function(에러, 결과){
+        if (결과 === null) return 응답.send("404 페이지 입니다.");
+        console.log(결과);
+        응답.render('detail.ejs', { data : 결과 });
+    });
+});
+
+// app.put('/editPut', function (request, response) {
+//     response.send('Got a PUT request at /user');
+// });
