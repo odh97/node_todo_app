@@ -2,6 +2,8 @@ const express = require('express')
 const app = express()
 app.use(express.urlencoded({ extended: true }));
 const MongoClient = require('mongodb').MongoClient;
+const methodOverride = require('method-override');
+app.use(methodOverride('_method'));
 app.set('view engine', 'ejs');
 
 app.use('/public', express.static('public'));
@@ -75,14 +77,14 @@ app.post('/add', function(request, response){
     db.collection('counter').findOne({name : '게시물 갯수'}, function(에러, 결과){
         let totalPostNm = 결과.totalPost;
 
-        //DB저장하기
+        // DB저장하기
         db.collection('post').insertOne( { _id : totalPostNm + 1, 제목 : request.body.title, 날짜 : today}, function(에러, 결과){
             console.log('todoapp DB 저장완료');
 
-            //여러개 수정할때
-            //db.collection('counter').updateMany()
-            //하나 수정할때
-            // db.collection('counter').updateOne({변경할 데이터 정의},{수정값},function(){})
+            // 여러개 수정할때
+            // db.collection('counter').updateMany()
+            // 하나 수정할때
+            // db.collection('counter').updateOne({변경할 데이터 정의},{수정값},function(에러, 결과){})
             // { $set : {바꿀값} }
             // { $inc : {기존값에 더해줄 값} }
             db.collection('counter').updateOne({name : '게시물 갯수'},{ $inc : {totalPost:1} },function(){})
@@ -92,7 +94,7 @@ app.post('/add', function(request, response){
 });
 
 app.get('/list', function(request, response){
-    //DB에 저장된 데이터 꺼내기
+    // DB에 저장된 데이터 꺼내기
     db.collection('post').find().toArray(function(에러, 결과){
         console.log(결과);
         response.render('list.ejs', { posts : 결과 });
@@ -101,7 +103,7 @@ app.get('/list', function(request, response){
 });
 
 app.delete('/delete', function(요청, 응답){
-    console.log(요청);
+    // console.log(요청);
     console.log(요청.body);
 
     요청.body._id = parseInt(요청.body._id);
@@ -117,7 +119,7 @@ app.delete('/delete', function(요청, 응답){
 
 app.get('/detail/:id', function(요청, 응답){
 
-    //DB에 저장된 데이터 꺼내기
+    // DB에 저장된 데이터 꺼내기
     db.collection('post').findOne({_id : parseInt(요청.params.id)},function(에러, 결과){
         if (결과 === null) return 응답.send("404 페이지 입니다.");
         console.log(결과);
@@ -125,16 +127,24 @@ app.get('/detail/:id', function(요청, 응답){
     });
 });
 
-app.get('/edit',function(요청, 응답){
+app.get('/edit/:id',function(요청, 응답){
 
-    //DB에 저장된 데이터 꺼내기
+    // DB에 저장된 데이터 꺼내기
     db.collection('post').findOne({_id : parseInt(요청.params.id)},function(에러, 결과){
         if (결과 === null) return 응답.send("404 페이지 입니다.");
         console.log(결과);
-        응답.render('detail.ejs', { data : 결과 });
+        응답.render('edit.ejs', { data : 결과 });
     });
 });
 
-// app.put('/editPut', function (request, response) {
-//     response.send('Got a PUT request at /user');
-// });
+
+
+
+app.put('/edit', function (요청, 응답) {
+    console.log(요청);
+
+    //DB에 데이터 수정하기
+    db.collection('post').updateOne({_id : parseInt(요청.body.id)}, {$set : {제목 : 요청.body.title, 날짜 : 요청.body.date }}, function(에러,결과){})
+    console.log('수정 완료');
+    응답.redirect('/list');
+});

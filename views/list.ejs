@@ -24,14 +24,14 @@ window.onload = function(){
 
 $('.delete').click(function(e){
 
-let dataID = e.target.dataset.id;
-console.log("데이터 : "+dataID);
-let 누른것 = $(this).parent("li");
+    let dataID = e.target.dataset.id;
+    console.log("데이터 : "+dataID);
+    let 누른것 = $(this).parent("li");
 
-$.ajax({
-    method : 'DELETE',
-    url : '/delete',
-    data : {_id:dataID}
+    $.ajax({
+        method : 'DELETE',
+        url : '/delete',
+        data : {_id:dataID}
     }).done(function(결과){
         console.log('ajax 요청 성공했습니다.');
         누른것.fadeOut();
@@ -60,7 +60,8 @@ $.ajax({
                 <h4>할일 제목 : <%= posts[i].제목 %></h4>
                 <p>할일 마감날짜 : <%= posts[i].날짜 %></p>
             </a>
-            <button type="button" class="btn btn-outline-success delete" data-id="<%= posts[i]._id %>">삭제하기</button>
+            <button type="button" class="btn btn-outline-danger delete" data-id="<%= posts[i]._id %>">삭제하기</button>
+            <a href="/edit/<%= posts[i]._id %>"  class="btn btn-outline-success editBtn" data-id="<%= posts[i]._id %>">수정하기</a>
         </li>
         <% } %>
     </ul>

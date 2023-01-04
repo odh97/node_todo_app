@@ -19,36 +19,7 @@ main > h4{margin: 20px auto;}
 main form button{width: 30%;}
 
 </style>
-<script>
-// script
-// ajax 서버 통신 방법
-// 가장큰 장점 : 새로고침 없이도 서버랑 통신이 가능하다.
-
-window.onload = function(){
-
-console.log("데이터 확인 : " + dataset.id);
-
-$('.putBtn').click(function(e){
-
-    let dataID = e.target.dataset.id;
-    console.log("데이터 : "+dataID);
-    let 누른것 = $(this).parent("li");
-
-    $.ajax({
-        method : 'PUT',
-        url : '/editPut',
-        data : {_id:dataID}
-    }).done(function(결과){
-        console.log('ajax 요청 성공했습니다.');
-        누른것.fadeOut();
-
-    }).fail(function(xhr, textStatus, errorThrown){
-        console.log(xhr, textStatus, errorThrown);
-    });
-});
-
-};
-</script>
+<script></script>
 <body>
 <!-- header -->
 <%-include('nav.html') %>
@@ -56,18 +27,19 @@ $('.putBtn').click(function(e){
 <hr />
 <!-- main -->
 <main>
-<h4>수정하기</h4>
+    <h4>수정하기</h4>
     <div class="todoFormBox">
-        <form action="/add" method="POST">
+        <form action="/edit?_method=PUT" method="POST">
             <div class="form-group">
                 <label>할일</label>
-                <input type="text" class="form-control" name="title"/>
+                <input type="text" name="id" value="<%= data._id %>" style="display: none;" />
+                <input type="text" class="form-control" name="title" value="<%= data.제목 %>" />
             </div>
             <div class="form-group">
                 <label>Due date</label>
-                <textarea class="form-control" name="date"></textarea>
+                <textarea class="form-control" name="date"><%= data.날짜 %></textarea>
             </div>
-            <button type="submit" class="btn btn-outline-dark putBtn">Submit</button>
+            <button type="submit" class="btn btn-outline-dark">Submit</button>
         </form>
     </div>
 </main>
