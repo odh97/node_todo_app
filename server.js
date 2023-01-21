@@ -5,20 +5,20 @@ const MongoClient = require('mongodb').MongoClient;
 const methodOverride = require('method-override');
 app.use(methodOverride('_method'));
 app.set('view engine', 'ejs');
+require('dotenv').config()
 
 app.use('/public', express.static('public'));
 
 var db;
 
-MongoClient.connect('mongodb+srv://zxdheogus1:qwer1234@cluster0.awi9wey.mongodb.net/?retryWrites=true&w=majority',
-function(error, client){
+MongoClient.connect(process.env.DB_URL, function(error, client){
     //연결되면 할일
     if (error) return console.log(error);
 
     //DB 사용방법
     db = client.db('todoapp');
 
-    app.listen(8080, function() {
+    app.listen(process.env.PORT, function() {
         console.log('listening on 8080');
     });
 });
@@ -103,6 +103,14 @@ app.get('/list', function(request, response){
 
 });
 
+app.get('/search', (요청, 응답)=>{
+    console.log(요청.query.value);
+    db.collection('post').find({제목 : 요청.query.value}).toArray((에러, 결과)=>{
+        console.log(결과);
+        응답.render('searchList',{result : 결과});
+    })
+});
+
 app.delete('/delete', function(요청, 응답){
     // console.log(요청);
     console.log(요청.body);
@@ -169,6 +177,21 @@ app.post('/login', passport.authenticate('local', {
         응답.redirect('/');
 });
 
+//만든 미들웨어 사용 해보기
+app.get('/mypage', 로그인체크, function(요청, 응답){
+    console.log(요청.user);
+    응답.render('mypage.ejs', {사용자 : 요청.user});
+});
+
+//미들웨어 만들기
+function 로그인체크(요청, 응답, next){
+    if(요청.user){
+        next(); // next : 다음으로 통과 시켜주는 함수
+    } else{
+        응답.send('로그인안하셨는데요?');
+    }
+}
+
 
 passport.use(new LocalStrategy({
     usernameField: 'id',        //form에 name의 id value 값을 가져온다
@@ -196,7 +219,9 @@ passport.serializeUser(function (user, done) {
 
 // 나중에 사용(마이페이지 접속시 실행)
 passport.deserializeUser(function (아이디, done) {
-    done(null, {})
+    db.collection('login').findOne({id : 아이디}, function(에러, 결과){
+        done(null, 결과)
+    })
 }); 
 
 
