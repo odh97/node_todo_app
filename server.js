@@ -104,12 +104,31 @@ app.get('/list', function(request, response){
 });
 
 app.get('/search', (요청, 응답)=>{
+    var 검색조건 = [
+        {
+            $search: {
+            index: 'titleSearch',
+            text: {
+                query: 요청.query.value,
+                path: '제목'  // 제목날짜 둘다 찾고 싶으면 ['제목', '날짜']
+                }
+            }
+        },
+        //{$sort : {_id : 1}},  // $sort  : 전체를 검색후 원하는 값으로 정렬이 가능하다.
+        //{$limit : 10},        // $limit : 가져올 데이터의 갯수를 정해준다.
+        {$project : {제목 : 1, _id: 0, score:{$meta:"searchScore"}}} // $project : 검색결과에서 필터를줄 수 있다. $meat : 몽고DB에서 제공하는 스코어 시스템
+    ] 
     console.log(요청.query.value);
-    db.collection('post').find({제목 : 요청.query.value}).toArray((에러, 결과)=>{
+    db.collection('post').aggregate(검색조건).toArray((에러, 결과)=>{
         console.log(결과);
         응답.render('searchList',{result : 결과});
     })
 });
+
+
+
+
+
 
 app.delete('/delete', function(요청, 응답){
     // console.log(요청);
@@ -177,6 +196,14 @@ app.post('/login', passport.authenticate('local', {
         응답.redirect('/');
 });
 
+app.post('/register', function(request, response){
+    // DB저장하기
+    db.collection('login').insertOne( { id : request.body.id, pw : request.body.pw}, function(에러, 결과){
+        console.log('회원가입 성공');
+    });
+});
+
+
 //만든 미들웨어 사용 해보기
 app.get('/mypage', 로그인체크, function(요청, 응답){
     console.log(요청.user);
@@ -192,7 +219,7 @@ function 로그인체크(요청, 응답, next){
     }
 }
 
-
+//회원가입 기능
 passport.use(new LocalStrategy({
     usernameField: 'id',        //form에 name의 id value 값을 가져온다
     passwordField: 'pw',        //form에 name의 pw value 값을 가져온다
@@ -215,7 +242,7 @@ passport.use(new LocalStrategy({
 // id를 이용해서 세션을 저장시키는 코드(로그인 성공시 실행)
 passport.serializeUser(function (user, done) {
     done(null, user.id)
-  });
+});
 
 // 나중에 사용(마이페이지 접속시 실행)
 passport.deserializeUser(function (아이디, done) {

@@ -41,11 +41,17 @@ $('.delete').click(function(e){
     });
 });
 
+
+//query string 3가지
 $("#search").click(function(){
     let searchVal = $('#search-input').val();
     window.location.replace('/search?value='+searchVal);
 });
 
+let objData = {이름 : '값', 이름2 : '값2'}
+$.param(objData);
+
+$(폼태그).serialize(); //form태그 안에있는 input 값을 다 query string해준다.
 
 };
 
