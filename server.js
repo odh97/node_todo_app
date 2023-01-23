@@ -63,37 +63,6 @@ app.get('/write', function(request, response){
 
 */
 
-
-//post 요청
-app.post('/add', function(request, response){
-    response.send('전송완료');
-    console.log(request.body.title);
-    console.log(request.body.date);
-
-    let day = new Date();
-    let today = day.toLocaleDateString();
-
-    
-    // auto increment(자동으로 ID번호를 만들어주기)
-    db.collection('counter').findOne({name : '게시물 갯수'}, function(에러, 결과){
-        let totalPostNm = 결과.totalPost;
-
-        // DB저장하기
-        db.collection('post').insertOne( { _id : totalPostNm + 1, 제목 : request.body.title, 날짜 : today}, function(에러, 결과){
-            console.log('todoapp DB 저장완료');
-
-            // 여러개 수정할때
-            // db.collection('counter').updateMany()
-            // 하나 수정할때
-            // db.collection('counter').updateOne({변경할 데이터 정의},{수정값},function(에러, 결과){})
-            // { $set : {바꿀값} }
-            // { $inc : {기존값에 더해줄 값} }
-            db.collection('counter').updateOne({name : '게시물 갯수'},{ $inc : {totalPost:1} },function(){})
-        });
-
-    });
-});
-
 app.get('/list', function(request, response){
     // DB에 저장된 데이터 꺼내기
     db.collection('post').find().toArray(function(에러, 결과){
@@ -127,22 +96,6 @@ app.get('/search', (요청, 응답)=>{
 
 
 
-
-
-
-app.delete('/delete', function(요청, 응답){
-    // console.log(요청);
-    console.log(요청.body);
-
-    요청.body._id = parseInt(요청.body._id);
-
-    // DELETE
-    // db.collection('post').deleteOne({삭제할 데이터}, function(){});
-    db.collection('post').deleteOne(요청.body, function(에러, 결과){
-        console.log('DB post 데이터 삭제 완료');
-        응답.status(200).send({ message : '성공했습니다.' });
-    });
-});
 
 
 app.get('/detail/:id', function(요청, 응답){
@@ -196,10 +149,11 @@ app.post('/login', passport.authenticate('local', {
         응답.redirect('/');
 });
 
-app.post('/register', function(request, response){
+app.post('/register', function(요청, 응답){
     // DB저장하기
-    db.collection('login').insertOne( { id : request.body.id, pw : request.body.pw}, function(에러, 결과){
+    db.collection('login').insertOne( { id : 요청.body.id, pw : 요청.body.pw}, function(에러, 결과){
         console.log('회원가입 성공');
+        응답.redirect('/');
     });
 });
 
@@ -253,3 +207,55 @@ passport.deserializeUser(function (아이디, done) {
 
 
 
+//post 요청
+app.post('/add', function(request, response){
+
+    response.send('전송완료');
+    console.log(request.body.title);
+    console.log(request.body.date);
+
+    let day = new Date();
+    let today = day.toLocaleDateString();
+
+    
+    // auto increment(자동으로 ID번호를 만들어주기)
+    db.collection('counter').findOne({name : '게시물 갯수'}, function(에러, 결과){
+        let totalPostNm = 결과.totalPost;
+
+        let 저장할것 = { _id : totalPostNm + 1, 작성자 : request.user.id, 제목 : request.body.title, 날짜 : today}
+
+        // DB저장하기
+        db.collection('post').insertOne( 저장할것, function(에러, 결과){
+            console.log('todoapp DB 저장완료');
+
+            // 여러개 수정할때
+            // db.collection('counter').updateMany()
+            // 하나 수정할때
+            // db.collection('counter').updateOne({변경할 데이터 정의},{수정값},function(에러, 결과){})
+            // { $set : {바꿀값} }
+            // { $inc : {기존값에 더해줄 값} }
+            db.collection('counter').updateOne({name : '게시물 갯수'},{ $inc : {totalPost:1} },function(){})
+        });
+
+    });
+});
+
+
+
+app.delete('/delete', function(요청, 응답){
+    // console.log(요청);
+    console.log("삭제요청들어옴");
+    console.log(요청.body);
+    요청.body._id = parseInt(요청.body._id);
+
+    let 삭제할데이터 = {_id : 요청.body._id, 작성자 : 요청.user._id}
+
+    // DELETE
+    // db.collection('post').deleteOne({삭제할 데이터}, function(){});
+    db.collection('post').deleteOne(삭제할데이터, function(에러, 결과){
+        console.log('DB post 데이터 삭제 완료');
+        if(에러) {console.log(에러)}
+        if(결과) {console.log(결과)}
+        응답.status(200).send({ message : '성공했습니다.' });
+    });
+});
