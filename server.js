@@ -264,3 +264,51 @@ app.use('/shop', require('./routus/shop.js'));
 app.use('/board/sub', require('./routus/board.js'));
 
 
+let multer = require('multer');
+var storage = multer.diskStorage({
+
+  destination : function(req, file, cb){
+    cb(null, './public/image');
+  },
+  filename : function(req, file, cb){
+    let toDay = new Date();
+    cb(null, file.originalname + "날짜 " + toDay.toLocaleDateString());
+  }
+
+});
+
+var path = require('path');
+
+var upload = multer({
+    storage: storage,
+    fileFilter: function (req, file, callback) {
+        var ext = path.extname(file.originalname);
+        if(ext !== '.png' && ext !== '.jpg' && ext !== '.jpeg') {
+            return callback(new Error('PNG, JPG만 업로드하세요'))
+        }
+        callback(null, true)
+    },
+    limits:{
+        fileSize: 1024 * 1024
+    }
+});
+
+app.get('/upload', (요청, 응답)=>{
+    응답.render('upload.ejs');
+});
+
+// app.post('/upload', upload.single('input의 name속성이름'), (요청, 응답)=>{
+// app.post('/upload', upload.array('input의 name속성이름', 최대 갯수), (요청, 응답)=>{
+app.post('/upload', upload.array('profile', 10), function(요청, 응답){
+    응답.send('업로드완료');
+});
+
+app.get('/image/:imageName', (요청, 응답)=>{
+    응답.sendFile(__dirname + '/public/image/' + 요청.params.imageName);
+});
+
+
+
+
+
+
