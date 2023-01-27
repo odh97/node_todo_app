@@ -236,7 +236,6 @@ app.post('/add', function(request, response){
             // { $inc : {기존값에 더해줄 값} }
             db.collection('counter').updateOne({name : '게시물 갯수'},{ $inc : {totalPost:1} },function(){})
         });
-
     });
 });
 
@@ -299,7 +298,7 @@ app.get('/upload', (요청, 응답)=>{
 
 // app.post('/upload', upload.single('input의 name속성이름'), (요청, 응답)=>{
 // app.post('/upload', upload.array('input의 name속성이름', 최대 갯수), (요청, 응답)=>{
-app.post('/upload', upload.array('profile', 10), function(요청, 응답){
+app.post('/upload', upload.array('profile', 5), function(요청, 응답){
     응답.send('업로드완료');
 });
 
@@ -308,13 +307,33 @@ app.get('/image/:imageName', (요청, 응답)=>{
 });
 
 
-app.get('/chat', (요청, 응답)=>{
+app.get('/chat/:id', (요청, 응답)=>{
+    console.log("요청body");
+    console.log(요청.params.id);
+    console.log("요청body 종료");
+    
     // DB에 저장된 데이터 꺼내기
     db.collection('chat').find().toArray(function(에러, 결과){
         console.log(결과);
-        응답.render('chat.ejs', { chatList : 결과 });
+        응답.render('chat.ejs', { chatList : 결과, id값 : 요청.params.id });
     });
 });
 
+app.post('/chatEnter', (요청, 응답)=>{
+    console.log("body 부분");
+    console.log(요청.body.id);
+    console.log("body 부분 종료");
+    // DB저장하기
+    db.collection('chat').insertOne( { _id : 요청.body.id, name : "로그인 세션 가져오기", comment : 요청.body.chat}, function(에러, 결과){
+        console.log('채팅 입력 완료');
+        응답.redirect('/chat/:'+요청.body.id);
+    });
+});
 
-
+// app.post('/register', function(요청, 응답){
+//     // DB저장하기
+//     db.collection('login').insertOne( { id : 요청.body.id, pw : 요청.body.pw}, function(에러, 결과){
+//         console.log('회원가입 성공');
+//         응답.redirect('/');
+//     });
+// });

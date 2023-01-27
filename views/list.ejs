@@ -69,7 +69,7 @@ $("#search").click(function(){
             </a>
             <button type="button" class="btn btn-outline-danger delete" data-id="<%= posts[i]._id %>">삭제하기</button>
             <a href="/edit/<%= posts[i]._id %>"  class="btn btn-outline-success editBtn" data-id="<%= posts[i]._id %>">수정하기</a>
-            <a href="/chat"  class="btn btn-outline-success editBtn float-right" data-id="<%= posts[i]._id %>">채팅방</a>
+            <a href="/chat/<%= posts[i]._id %>"  class="btn btn-outline-success editBtn float-right" data-id="<%= posts[i]._id %>">채팅방</a>
         </li>
         <% } %>
     </ul>

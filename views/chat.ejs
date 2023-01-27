@@ -30,59 +30,61 @@ window.onload = function(){
 <%-include('nav.html') %>
 <!-- //header -->
 <div class="container">
-    <h3 class="text-center mt-3 pb-3 border-bottom">채팅방</h3>
-    <ul class="list-unstyled mb-5">
-        <li class="media my-2">
-          <div class="media-body">
-            <div class="w-50">
-                <h5 class="mt-0 mb-1">이름</h5>
-                <p class="border rounded d-inline-block px-2 py-2">채팅 내용</p>
-            </div>
-          </div>
-        </li>
-        <li class="media my-2">
-          <div class="media-body">
-            <div class="w-50">
-                <h5 class="mt-0 mb-1">이름</h5>
-                <p class="border rounded d-inline-block px-2 py-2">채팅 내용채팅 내용채팅 내용채팅 내용채팅 내용채팅 내용채팅 내용채팅 내용   팅 내용채팅 내용채팅 내용채팅 내용채팅 내용채팅 내용채팅 내용팅 내용채팅 내용채팅 내용채팅 내용채팅 내용채팅 내용채팅 내용팅 내용채팅 내용채팅 내용채팅 내용채팅 내용채팅 내용채팅 내용팅 내용채팅 내용채팅 내용채팅 내용채팅 내용채팅 내용채팅 내용팅 내용채팅 내용채팅 내용채팅 내용채팅 내용채팅 내용채팅 내용팅 내용채팅 내용채팅 내용채팅 내용채팅 내용채팅 내용채팅 내용</p>    
-            </div>
-          </div>
-        </li>
-        <li class="media my-2">
-          <div class="media-body text-right">
-            <div class="w-50 float-right">
-                <p class="border rounded d-inline-block px-2 py-2">채팅 내용채팅 내용채팅 내용채팅 내용채팅 내용채팅 내용</p>
-            </div>
-          </div>
-        </li>
-        <li class="media my-2">
-          <div class="media-body">
-            <div class="w-50">
-                <h5 class="mt-0 mb-1">이름</h5>
-                <p class="border rounded d-inline-block px-2 py-2">채팅 내용</p>
-            </div>
-          </div>
-        </li>
-        <% for(let i=0; i < chatList.length; i++){ %>
-            <li class="media my-2">
-                <div class="media-body">
-                  <div class="w-50">
-                      <h5 class="mt-0 mb-1"><%= chatList[i].name %></h5>
-                      <p class="border rounded d-inline-block px-2 py-2"><%= chatList[i].comment %></p>
-                  </div>
-                </div>
-              </li>
-        <% } %>
-    </ul>
-</div>
-<footer class="container fixed-bottom">
-    <div class="input-group mb-3">
-        <input type="text" class="form-control" aria-label="Recipient's username" aria-describedby="button-addon2">
-        <div class="input-group-append">
-            <button class="btn btn-outline-secondary" type="button" id="button-addon2">등록</button>
+  <h3 class="text-center mt-3 pb-3 border-bottom">채팅방</h3>
+  <ul class="list-unstyled mb-5">
+    <li class="media my-2">
+      <div class="media-body">
+        <div class="w-50">
+            <h5 class="mt-0 mb-1">이름</h5>
+            <p class="border rounded d-inline-block px-2 py-2">채팅 내용</p>
         </div>
+      </div>
+    </li>
+    <li class="media my-2">
+      <div class="media-body">
+        <div class="w-50">
+            <h5 class="mt-0 mb-1">이름</h5>
+            <p class="border rounded d-inline-block px-2 py-2">채팅 내용채팅 내용채팅 내용채팅 내용채팅 내용채팅 내용채팅 내용채팅 내용   팅 내용채팅 내용채팅 내용채팅 내용채팅 내용채팅 내용채팅 내용팅 내용채팅 내용채팅 내용채팅 내용채팅 내용채팅 내용채팅 내용팅 내용채팅 내용채팅 내용채팅 내용채팅 내용채팅 내용채팅 내용팅 내용채팅 내용채팅 내용채팅 내용채팅 내용채팅 내용채팅 내용팅 내용채팅 내용채팅 내용채팅 내용채팅 내용채팅 내용채팅 내용팅 내용채팅 내용채팅 내용채팅 내용채팅 내용채팅 내용채팅 내용</p>    
+        </div>
+      </div>
+    </li>
+    <li class="media my-2">
+      <div class="media-body text-right">
+        <div class="w-50 float-right">
+            <p class="border rounded d-inline-block px-2 py-2">채팅 내용채팅 내용채팅 내용채팅 내용채팅 내용채팅 내용</p>
+        </div>
+      </div>
+    </li>
+    <li class="media my-2">
+      <div class="media-body">
+        <div class="w-50">
+          <h5 class="mt-0 mb-1">이름</h5>
+          <p class="border rounded d-inline-block px-2 py-2">채팅 내용</p>
+        </div>
+      </div>
+    </li>
+    <% for(let i=0; i < chatList.length; i++){ %>
+      <li class="media my-2">
+        <div class="media-body">
+          <div class="w-50">
+            <h5 class="mt-0 mb-1"><%= chatList[i].name %></h5>
+            <p class="border rounded d-inline-block px-2 py-2"><%= chatList[i].comment %></p>
+          </div>
+        </div>
+      </li>
+    <% } %>
+  </ul>
+</div>
+<footer class="container fixed-bottom bg-white">
+  <form  action="/chatEnter" method="POST">
+    <div class="input-group mb-3">
+      <input type="text" class="form-control" aria-label="Recipient's username" aria-describedby="button-addon2" name="chat" />
+      <input type="text" class="form-control d-none" aria-label="Recipient's username" aria-describedby="button-addon2" name="id" value="<%= id값 %>" />
+      <div class="input-group-append">
+        <button class="btn btn-outline-secondary" type="submit" id="button-addon2">등록</button>
+      </div>
     </div>
+  </form>
 </footer>
-
 </body>
 </html>
