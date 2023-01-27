@@ -308,7 +308,13 @@ app.get('/image/:imageName', (요청, 응답)=>{
 });
 
 
-
+app.get('/chat', (요청, 응답)=>{
+    // DB에 저장된 데이터 꺼내기
+    db.collection('chat').find().toArray(function(에러, 결과){
+        console.log(결과);
+        응답.render('chat.ejs', { chatList : 결과 });
+    });
+});
 
 
 
