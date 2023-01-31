@@ -23,7 +23,7 @@ MongoClient.connect(process.env.DB_URL, function(error, client){
     });
 });
 
-
+app.use(loginCheck);
 
 //누군가가 /pet 으로 방문하면..
 //pet 관련된 안내문을 띄워주자
@@ -40,13 +40,15 @@ app.get('/beauty', function(request, response){
 
 //__dirname은 현재 파일의 경로를 뜻합니다.
 app.get('/', function(request, response){
+    console.log("login Data check");
+    console.log(request.loginName);
     // response.sendFile(__dirname + '/index.html');
-    response.render('index.ejs');
+    response.render('index.ejs', { loginName : request.loginName });
 });
 
 app.get('/write', function(request, response){
     // response.sendFile(__dirname + '/write.html');
-    response.render('write.ejs');
+    response.render('write.ejs', { loginName : request.loginName });
 });
 
 // REST API 참고
@@ -67,7 +69,7 @@ app.get('/list', function(request, response){
     // DB에 저장된 데이터 꺼내기
     db.collection('post').find().toArray(function(에러, 결과){
         console.log(결과);
-        response.render('list.ejs', { posts : 결과 });
+        response.render('list.ejs', { loginName : request.loginName, posts : 결과 });
     });
 
 });
@@ -90,7 +92,7 @@ app.get('/search', (요청, 응답)=>{
     console.log(요청.query.value);
     db.collection('post').aggregate(검색조건).toArray((에러, 결과)=>{
         console.log(결과);
-        응답.render('searchList',{result : 결과});
+        응답.render('searchList',{loginName : 요청.loginName, result : 결과});
     })
 });
 
@@ -104,7 +106,7 @@ app.get('/detail/:id', function(요청, 응답){
     db.collection('post').findOne({_id : parseInt(요청.params.id)},function(에러, 결과){
         if (결과 === null) return 응답.send("404 페이지 입니다.");
         console.log(결과);
-        응답.render('detail.ejs', { data : 결과 });
+        응답.render('detail.ejs', {loginName : 요청.loginName, data : 결과 });
     });
 });
 
@@ -114,7 +116,7 @@ app.get('/edit/:id',function(요청, 응답){
     db.collection('post').findOne({_id : parseInt(요청.params.id)},function(에러, 결과){
         if (결과 === null) return 응답.send("404 페이지 입니다.");
         console.log(결과);
-        응답.render('edit.ejs', { data : 결과 });
+        응답.render('edit.ejs', {loginName : 요청.loginName, data : 결과 });
     });
 });
 
@@ -140,7 +142,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.get('/login', function(요청, 응답){
-    응답.render('login.ejs');
+    응답.render('login.ejs',{loginName : 요청.loginName});
 });
 
 app.post('/login', passport.authenticate('local', {
@@ -161,17 +163,41 @@ app.post('/register', function(요청, 응답){
 //만든 미들웨어 사용 해보기
 app.get('/mypage', 로그인체크, function(요청, 응답){
     console.log(요청.user);
-    응답.render('mypage.ejs', {사용자 : 요청.user});
+    응답.render('mypage.ejs', {loginName : 요청.loginName, 사용자 : 요청.user});
 });
 
 //미들웨어 만들기
 function 로그인체크(요청, 응답, next){
     if(요청.user){
+        console.log(요청.user);
         next(); // next : 다음으로 통과 시켜주는 함수
     } else{
+        console.log(요청.user);
         응답.send('로그인안하셨는데요?');
     }
 }
+
+
+//로그인 체크 및 nav
+function loginCheck(request, response, next){
+
+    if(request.user){
+        request.loginName = request.user;
+
+        console.log("미들웨어 데이터");
+        console.log(request.loginName);
+
+        next();
+    }else{
+        request.loginName = null;
+
+        console.log("미들웨어 데이터");
+        console.log(request.loginName);
+
+        next();
+    }
+}
+
 
 //회원가입 기능
 passport.use(new LocalStrategy({
@@ -262,7 +288,6 @@ app.delete('/delete', function(요청, 응답){
 app.use('/shop', require('./routus/shop.js'));
 app.use('/board/sub', require('./routus/board.js'));
 
-
 let multer = require('multer');
 var storage = multer.diskStorage({
 
@@ -293,7 +318,7 @@ var upload = multer({
 });
 
 app.get('/upload', (요청, 응답)=>{
-    응답.render('upload.ejs');
+    응답.render('upload.ejs', {loginName : 요청.loginName});
 });
 
 // app.post('/upload', upload.single('input의 name속성이름'), (요청, 응답)=>{
@@ -305,6 +330,17 @@ app.post('/upload', upload.array('profile', 5), function(요청, 응답){
 app.get('/image/:imageName', (요청, 응답)=>{
     응답.sendFile(__dirname + '/public/image/' + 요청.params.imageName);
 });
+
+
+
+
+
+
+
+
+
+
+
 
 
 app.get('/chat/:id', (요청, 응답)=>{
@@ -330,10 +366,7 @@ app.post('/chatEnter', (요청, 응답)=>{
     });
 });
 
-// app.post('/register', function(요청, 응답){
-//     // DB저장하기
-//     db.collection('login').insertOne( { id : 요청.body.id, pw : 요청.body.pw}, function(에러, 결과){
-//         console.log('회원가입 성공');
-//         응답.redirect('/');
-//     });
-// });
+
+
+
+

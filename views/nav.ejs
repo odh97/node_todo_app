@@ -15,7 +15,13 @@
             <a class="nav-link" href="/list">List</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="#">ODae</a>
+            <% if(locals.loginName === null){ %>
+                <a class="nav-link" href="/login">로그인</a>
+            <% } %>
+
+            <% if(locals.loginName !== null){ %>
+                <a class="nav-link" href="#"><%= loginName %></a>
+            <% } %>
         </li>
         </ul>
     </div>
