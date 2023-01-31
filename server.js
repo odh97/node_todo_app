@@ -40,7 +40,7 @@ app.get('/beauty', function(request, response){
 
 //__dirname은 현재 파일의 경로를 뜻합니다.
 app.get('/', function(request, response){
-    console.log("login Data check");
+    console.log("Home login Data check");
     console.log(request.loginName);
     // response.sendFile(__dirname + '/index.html');
     response.render('index.ejs', { loginName : request.loginName });
@@ -166,6 +166,32 @@ app.get('/mypage', 로그인체크, function(요청, 응답){
     응답.render('mypage.ejs', {loginName : 요청.loginName, 사용자 : 요청.user});
 });
 
+
+//로그인 체크
+function loginCheck(request, response, next){
+
+    if(request.user){
+        console.log("유저이름");
+        console.log(request.user);
+
+        request.loginName = request.user;
+
+        console.log("미들웨어 데이터");
+        console.log(request.loginName);
+
+        next();
+    }else{
+        console.log("데이터 없을 경우");
+
+        request.loginName = null;
+
+        console.log("미들웨어 데이터");
+        console.log(request.loginName);
+
+        next();
+    }
+}
+
 //미들웨어 만들기
 function 로그인체크(요청, 응답, next){
     if(요청.user){
@@ -178,25 +204,7 @@ function 로그인체크(요청, 응답, next){
 }
 
 
-//로그인 체크 및 nav
-function loginCheck(request, response, next){
 
-    if(request.user){
-        request.loginName = request.user;
-
-        console.log("미들웨어 데이터");
-        console.log(request.loginName);
-
-        next();
-    }else{
-        request.loginName = null;
-
-        console.log("미들웨어 데이터");
-        console.log(request.loginName);
-
-        next();
-    }
-}
 
 
 //회원가입 기능
