@@ -9,6 +9,19 @@ require('dotenv').config()
 
 app.use('/public', express.static('public'));
 
+
+//세션
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+const session = require('express-session');
+
+app.use(session({secret : '비밀코드', resave : true, saveUninitialized: false}));
+app.use(passport.initialize());
+app.use(passport.session());
+
+//미들웨어 전체 적용
+app.use(fuckingloginCheck);
+
 var db;
 
 MongoClient.connect(process.env.DB_URL, function(error, client){
@@ -23,7 +36,7 @@ MongoClient.connect(process.env.DB_URL, function(error, client){
     });
 });
 
-app.use(loginCheck);
+
 
 //누군가가 /pet 으로 방문하면..
 //pet 관련된 안내문을 띄워주자
@@ -37,13 +50,13 @@ app.get('/beauty', function(request, response){
     response.send("뷰티용품 쇼핑할 수 있는 페이지입니다..");
 });
 
-
 //__dirname은 현재 파일의 경로를 뜻합니다.
-app.get('/', function(request, response){
+app.get('/', function(req, res){
     console.log("Home login Data check");
-    console.log(request.loginName);
-    // response.sendFile(__dirname + '/index.html');
-    response.render('index.ejs', { loginName : request.loginName });
+    console.log(req.loginName);
+    console.log("=================  Home 종료  =================");
+    // res.sendFile(__dirname + '/index.html');
+    res.render('index.ejs', { loginName : req.loginName });
 });
 
 app.get('/write', function(request, response){
@@ -133,14 +146,6 @@ app.put('/edit', function (요청, 응답) {
 });
 
 
-const passport = require('passport');
-const LocalStrategy = require('passport-local').Strategy;
-const session = require('express-session');
-
-app.use(session({secret : '비밀코드', resave : true, saveUninitialized: false}));
-app.use(passport.initialize());
-app.use(passport.session());
-
 app.get('/login', function(요청, 응답){
     응답.render('login.ejs',{loginName : 요청.loginName});
 });
@@ -162,35 +167,10 @@ app.post('/register', function(요청, 응답){
 
 //만든 미들웨어 사용 해보기
 app.get('/mypage', 로그인체크, function(요청, 응답){
+    console.log(요청);
     console.log(요청.user);
     응답.render('mypage.ejs', {loginName : 요청.loginName, 사용자 : 요청.user});
 });
-
-
-//로그인 체크
-function loginCheck(request, response, next){
-
-    if(request.user){
-        console.log("유저이름");
-        console.log(request.user);
-
-        request.loginName = request.user;
-
-        console.log("미들웨어 데이터");
-        console.log(request.loginName);
-
-        next();
-    }else{
-        console.log("데이터 없을 경우");
-
-        request.loginName = null;
-
-        console.log("미들웨어 데이터");
-        console.log(request.loginName);
-
-        next();
-    }
-}
 
 //미들웨어 만들기
 function 로그인체크(요청, 응답, next){
@@ -200,6 +180,40 @@ function 로그인체크(요청, 응답, next){
     } else{
         console.log(요청.user);
         응답.send('로그인안하셨는데요?');
+    }
+}
+
+//로그인 체크
+function fuckingloginCheck(req, res, next){
+    
+    console.log(req);
+
+    console.log("로그인 여부 확인");
+    console.log(req.user);
+
+    if(req.user){
+        console.log("유저이름");
+        console.log(req.user);
+
+        req.loginName = req.user;
+
+        console.log("미들웨어 데이터");
+        console.log(req.loginName);
+        
+        console.log("=================  미들웨어 종료  =================");
+
+        next();
+    }else{
+        console.log("데이터 없을 경우");
+
+        req.loginName = null;
+
+        console.log("미들웨어 데이터");
+        console.log(req.loginName);
+
+        console.log("=================  미들웨어 종료  =================");
+
+        next();
     }
 }
 
@@ -359,7 +373,7 @@ app.get('/chat/:id', (요청, 응답)=>{
     // DB에 저장된 데이터 꺼내기
     db.collection('chat').find().toArray(function(에러, 결과){
         console.log(결과);
-        응답.render('chat.ejs', { chatList : 결과, id값 : 요청.params.id });
+        응답.render('chat.ejs', { chatList : 결과, id값 : 요청.params.id , loginName : 요청.loginName });
     });
 });
 
