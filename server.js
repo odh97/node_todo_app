@@ -20,7 +20,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 //미들웨어 전체 적용
-app.use(fuckingloginCheck);
+app.use(loginCheck);
 
 var db;
 
@@ -184,11 +184,10 @@ function 로그인체크(요청, 응답, next){
 }
 
 //로그인 체크
-function fuckingloginCheck(req, res, next){
+function loginCheck(req, res, next){
     
-    console.log(req);
 
-    console.log("로그인 여부 확인");
+    console.log("로그인 데이터 확인");
     console.log(req.user);
 
     if(req.user){
@@ -378,13 +377,17 @@ app.get('/chat/:id', (요청, 응답)=>{
 });
 
 app.post('/chatEnter', (요청, 응답)=>{
+    console.log("======== chatEnter 시작 ===========");
     console.log("body 부분");
-    console.log(요청.body.id);
+    console.log("==요청.user==");
+    console.log(요청.user);
+    console.log("==요청.body==");
+    console.log(요청.body);
     console.log("body 부분 종료");
     // DB저장하기
-    db.collection('chat').insertOne( { _id : 요청.body.id, name : "로그인 세션 가져오기", comment : 요청.body.chat}, function(에러, 결과){
+    db.collection('chat').insertOne( { chatNumber : 요청.body.id, name : 요청.user.id, comment : 요청.body.chat}, function(에러, 결과){
         console.log('채팅 입력 완료');
-        응답.redirect('/chat/:'+요청.body.id);
+        응답.redirect('/chat/'+요청.body.id);
     });
 });
 

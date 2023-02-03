@@ -15,6 +15,17 @@
 /* css */
 a{color: black;}
 a:hover{color: black;text-decoration: none;}
+
+
+.onBtn{
+}
+.offBtn{
+  opacity: 0.4;
+  pointer-events: none;
+  
+}
+
+
 </style>
 <script>
 // script
@@ -22,10 +33,45 @@ a:hover{color: black;text-decoration: none;}
 // 가장큰 장점 : 새로고침 없이도 서버랑 통신이 가능하다.
 window.onload = function(){
 
+let chatVal = document.getElementById("chatVal");
+let chatBtn = document.getElementById("button-addon2");
+let stopKeydown = true;
+
+
+chatVal.oninput = changeData;
+
+function changeData(e){
+  console.log(e.target.value);
+
+  if(e.target.value.length !== 0){
+
+    chatBtn.classList.remove('onBtn', 'offBtn');
+    chatBtn.classList.add('onBtn');
+    stopKeydown = false;
+
+  }else{
+
+    chatBtn.classList.remove('onBtn', 'offBtn');
+    chatBtn.classList.add('offBtn');
+    stopKeydown = true;
+
+  }
+
 };
 
+document.addEventListener('keydown', function(event) {
+  if(stopKeydown){
+    if (event.keyCode === 13) {
+    event.preventDefault();
+    };
+  }
+});
+
+
+};
 </script>
 <body>
+
 <!-- header -->
 <%-include('nav.ejs', {loginName}) %>
 <!-- //header -->
@@ -78,10 +124,10 @@ window.onload = function(){
 <footer class="container fixed-bottom bg-white">
   <form  action="/chatEnter" method="POST">
     <div class="input-group mb-3">
-      <input type="text" class="form-control" aria-label="Recipient's username" aria-describedby="button-addon2" name="chat" />
+      <input type="text" class="form-control" aria-label="Recipient's username" aria-describedby="button-addon2" name="chat" id="chatVal" />
       <input type="text" class="form-control d-none" aria-label="Recipient's username" aria-describedby="button-addon2" name="id" value="<%= id값 %>" />
       <div class="input-group-append">
-        <button class="btn btn-outline-secondary" type="submit" id="button-addon2">등록</button>
+        <button class="btn btn-outline-secondary toggleBtn offBtn" type="submit" id="button-addon2">등록</button>
       </div>
     </div>
   </form>
