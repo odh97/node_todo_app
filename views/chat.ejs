@@ -110,14 +110,29 @@ document.addEventListener('keydown', function(event) {
       </div>
     </li>
     <% for(let i=0; i < chatList.length; i++){ %>
-      <li class="media my-2">
-        <div class="media-body">
-          <div class="w-50">
-            <h5 class="mt-0 mb-1"><%= chatList[i].name %></h5>
-            <p class="border rounded d-inline-block px-2 py-2"><%= chatList[i].comment %></p>
-          </div>
-        </div>
-      </li>
+      <% if(locals.chatList[i].chatNumber === locals.id값){ %>
+
+        <% if(locals.chatList[i].name === locals.loginName.id){ %>
+          <li class="media my-2">
+            <div class="media-body text-right">
+              <div class="w-50 float-right">
+                  <p class="border rounded d-inline-block px-2 py-2"><%= chatList[i].comment %></p>
+              </div>
+            </div>
+          </li>
+        <% }%>      
+        <% if(locals.chatList[i].name !== locals.loginName.id){ %>
+          <li class="media my-2">
+            <div class="media-body">
+              <div class="w-50">
+                <h5 class="mt-0 mb-1"><%= chatList[i].name %></h5>
+                <p class="border rounded d-inline-block px-2 py-2"><%= chatList[i].comment %></p>
+              </div>
+            </div>
+          </li>
+        <% }%>
+
+      <% } %>
     <% } %>
   </ul>
 </div>
@@ -127,7 +142,7 @@ document.addEventListener('keydown', function(event) {
       <input type="text" class="form-control" aria-label="Recipient's username" aria-describedby="button-addon2" name="chat" id="chatVal" />
       <input type="text" class="form-control d-none" aria-label="Recipient's username" aria-describedby="button-addon2" name="id" value="<%= id값 %>" />
       <div class="input-group-append">
-        <button class="btn btn-outline-secondary toggleBtn offBtn" type="submit" id="button-addon2">등록</button>
+        <button class= "btn btn-outline-secondary toggleBtn offBtn" type="submit" id="button-addon2">등록</button>
       </div>
     </div>
   </form>

@@ -41,6 +41,29 @@ $('.delete').click(function(e){
     });
 });
 
+$('#chatBtn').click(function(e){
+
+    let dataID = e.target.dataset.id;
+    let dataUser = e.target.dataset.user;
+    let dataVal = e.target.dataset.val;
+
+    console.log(e.target.dataset);
+    console.log("ID 데이터 : "+dataID);
+    console.log("user 데이터 : "+dataUser);
+    console.log("val 데이터 : "+dataVal);
+
+    $.ajax({
+        method : 'GET',
+        url : '/chat/'+dataID,
+        data : {_id:dataID,user:dataUser,val:dataVal}
+    }).done(function(결과){
+        console.log('ajax get 요청 성공했습니다.');
+
+    }).fail(function(xhr, textStatus, errorThrown){
+        console.log(xhr, textStatus, errorThrown);
+    });
+});
+
 $("#search").click(function(){
     let searchVal = $('#search-input').val();
     window.location.replace('/search?value='+searchVal);
@@ -63,17 +86,23 @@ $("#search").click(function(){
     <ul class="list-group">
         <% for(let i=0; i < posts.length; i++){ %>
         <li class="list-group-item">
-            <a href="detail/<%= posts[i]._id %>" data-id="<%= posts[i]._id %>">
+            <p>작성자 : <%= posts[i].작성자 %></p>
+            <a href="detail/<%= posts[i]._id %>">
                 <h4>할일 제목 : <%= posts[i].제목 %></h4>
                 <p>할일 마감날짜 : <%= posts[i].날짜 %></p>
             </a>
             <button type="button" class="btn btn-outline-danger delete" data-id="<%= posts[i]._id %>">삭제하기</button>
-            <a href="/edit/<%= posts[i]._id %>"  class="btn btn-outline-success editBtn" data-id="<%= posts[i]._id %>">수정하기</a>
+            <a href="/edit/<%= posts[i]._id %>" class="btn btn-outline-success editBtn">수정하기</a>
             <% if(loginName){ %>
-                <a href="/chat/<%= posts[i]._id %>"  class="btn btn-outline-success editBtn float-right" data-id="<%= posts[i]._id %>">채팅방</a>
+                <% if(loginName.id !== locals.posts[i].작성자){ %>
+                    <button id="chatBtn" class="btn btn-outline-success editBtn float-right"
+                    data-id="<%= posts[i]._id %>" data-user="test" data-val="123"
+                    >샘플 데이터 버튼</button>
+                    <a href="/chat/<%= posts[i]._id %>" class="btn btn-outline-success editBtn float-right">채팅방</a>
+                <% } %>
             <% } %>
             <% if(!loginName){ %>
-                <a href="/login"  class="btn btn-outline-success editBtn float-right" data-id="<%= posts[i]._id %>">채팅방</a>
+                <a href="/login" class="btn btn-outline-success editBtn float-right">채팅방</a>
             <% } %>
         </li>
         <% } %>

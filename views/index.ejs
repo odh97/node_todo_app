@@ -19,22 +19,31 @@ body{
 <!-- header -->
 <%-include('nav.ejs', {loginName}) %>
 <!-- //header -->
-<h4>안녕하세요 홈페이지입니다.</h4>
-<p>홈입니다.</p>
-<div class="alert alert-primary" role="alert">A simple primary alert—check it out!</div>
-<div class="alert alert-primary" role="alert">
-    A simple primary alert with
-    <a href="#" class="alert-link">an example link</a>
-    . Give it a click if you like.
-</div>
-<button type="button" class="btn btn-primary">Primary</button>
-<button type="button" class="btn btn-secondary">Secondary</button>
-<button type="button" class="btn btn-success">Success</button>
-<button type="button" class="btn btn-danger">Danger</button>
-<button type="button" class="btn btn-warning">Warning</button>
-<button type="button" class="btn btn-info">Info</button>
-<button type="button" class="btn btn-light">Light</button>
-<button type="button" class="btn btn-dark">Dark</button>
+<h4>Home</h4>
+
+<main class="container">
+    <h4 class="mt-4">샘플 계정입니다.</h4>
+    <% for(let i=0; 3 > i; i++){ %>
+        <div class="card mb-2">
+            <div class="card-body">
+                아이디 : <%= posts[i].id %> <br/>
+                비밀번호 : <%= posts[i].pw %>
+            </div>
+        </div>
+    <% } %>
+    
+    
+    <button type="button" class="btn btn-primary">Primary</button>
+    <button type="button" class="btn btn-secondary">Secondary</button>
+    <button type="button" class="btn btn-success">Success</button>
+    <button type="button" class="btn btn-danger">Danger</button>
+    <button type="button" class="btn btn-warning">Warning</button>
+    <button type="button" class="btn btn-info">Info</button>
+    <button type="button" class="btn btn-light">Light</button>
+    <button type="button" class="btn btn-dark">Dark</button>
+</main>
+
+
 
 
 

@@ -55,8 +55,13 @@ app.get('/', function(req, res){
     console.log("Home login Data check");
     console.log(req.loginName);
     console.log("=================  Home 종료  =================");
-    // res.sendFile(__dirname + '/index.html');
-    res.render('index.ejs', { loginName : req.loginName });
+    
+    db.collection('login').find().toArray(function(에러, 결과){
+        console.log("=======login data=======");
+        console.log(결과);
+        // res.sendFile(__dirname + '/index.html');
+        res.render('index.ejs', { loginName : req.loginName, posts : 결과 });
+    });
 });
 
 app.get('/write', function(request, response){
@@ -352,20 +357,11 @@ app.get('/image/:imageName', (요청, 응답)=>{
     응답.sendFile(__dirname + '/public/image/' + 요청.params.imageName);
 });
 
-
-
-
-
-
-
-
-
-
-
-
-
 app.get('/chat/:id', (요청, 응답)=>{
+    console.log("===============chat 시작===============");
     console.log("요청body");
+    console.log(요청.body);
+    // 요청.body._id = parseInt(요청.body._id);
     console.log(요청.params.id);
     console.log("요청body 종료");
     
