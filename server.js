@@ -152,12 +152,15 @@ app.put('/edit', function (요청, 응답) {
 
 
 app.get('/login', function(요청, 응답){
+    console.log("===============login GET 시작===============");
+
     응답.render('login.ejs',{loginName : 요청.loginName});
 });
 
 app.post('/login', passport.authenticate('local', {
     failureRedirect : '/fail'
     }), function(요청, 응답){
+        console.log("===============login POST 시작===============");
         응답.redirect('/');
 });
 
@@ -262,7 +265,6 @@ passport.deserializeUser(function (아이디, done) {
 //post 요청
 app.post('/add', function(request, response){
 
-    response.send('전송완료');
     console.log(request.body.title);
     console.log(request.body.date);
 
@@ -287,8 +289,10 @@ app.post('/add', function(request, response){
             // { $set : {바꿀값} }
             // { $inc : {기존값에 더해줄 값} }
             db.collection('counter').updateOne({name : '게시물 갯수'},{ $inc : {totalPost:1} },function(){})
+            response.redirect('/');
         });
     });
+    
 });
 
 
@@ -296,10 +300,11 @@ app.post('/add', function(request, response){
 app.delete('/delete', function(요청, 응답){
     // console.log(요청);
     console.log("삭제요청들어옴");
+    console.log(요청.user);
     console.log(요청.body);
     요청.body._id = parseInt(요청.body._id);
 
-    let 삭제할데이터 = {_id : 요청.body._id, 작성자 : 요청.user._id}
+    let 삭제할데이터 = {_id : 요청.body._id, 작성자 : 요청.user.id}
 
     // DELETE
     // db.collection('post').deleteOne({삭제할 데이터}, function(){});
@@ -358,28 +363,51 @@ app.get('/image/:imageName', (요청, 응답)=>{
 });
 
 app.get('/chat/:id', (요청, 응답)=>{
-    console.log("===============chat 시작===============");
+    console.log("===============chat GET 시작===============");
+
+    // DB에 저장된 데이터 꺼내기
+    db.collection('chat').find().toArray(function(에러, 결과){
+        응답.render('chat.ejs', { chatList : 결과, id값 : 요청.params.id, loginName : 요청.loginName });
+    });
+});
+
+app.post('/chat/:id', (요청, 응답)=>{
+    console.log("===============chat POST 시작===============");
+
     console.log("요청body");
     console.log(요청.body);
     // 요청.body._id = parseInt(요청.body._id);
-    console.log(요청.params.id);
+    console.log("요청.params");
+    console.log(요청.params);
+    console.log("요청.user");
+    console.log(요청.user);
     console.log("요청body 종료");
-    
+
     // DB에 저장된 데이터 꺼내기
-    db.collection('chat').find().toArray(function(에러, 결과){
-        console.log(결과);
-        응답.render('chat.ejs', { chatList : 결과, id값 : 요청.params.id , loginName : 요청.loginName });
-    });
+
+    // if(){
+        // DB 저장하기 (채팅룸 생성)
+        // db.collection('chatRoom').insertOne( { chatNumber : 요청.body.id, name : 요청.user.id, comment : 요청.body.chat}, function(에러, 결과){
+        //     if(에러){console.log(에러)}
+
+        //     console.log('DB chatRoom');
+        //     응답.redirect('/chat/'+요청.body._id);
+        // });
+    // }else{
+        // DB 저장된 채팅룸 가져오기
+    // }
+
 });
 
 app.post('/chatEnter', (요청, 응답)=>{
     console.log("======== chatEnter 시작 ===========");
     console.log("body 부분");
-    console.log("==요청.user==");
+    console.log("======== 요청.user ========");
     console.log(요청.user);
-    console.log("==요청.body==");
+    console.log("======== 요청.body ========");
     console.log(요청.body);
     console.log("body 부분 종료");
+
     // DB저장하기
     db.collection('chat').insertOne( { chatNumber : 요청.body.id, name : 요청.user.id, comment : 요청.body.chat}, function(에러, 결과){
         console.log('채팅 입력 완료');

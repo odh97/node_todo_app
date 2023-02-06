@@ -41,27 +41,29 @@ $('.delete').click(function(e){
     });
 });
 
-$('#chatBtn').click(function(e){
+$('.chatBtn').click(function(e){
 
     let dataID = e.target.dataset.id;
-    let dataUser = e.target.dataset.user;
-    let dataVal = e.target.dataset.val;
+    let user1 = e.target.dataset.user1;
+    let user2 = e.target.dataset.user2;
 
     console.log(e.target.dataset);
     console.log("ID 데이터 : "+dataID);
-    console.log("user 데이터 : "+dataUser);
-    console.log("val 데이터 : "+dataVal);
+    console.log("user1 데이터 : "+user1);
+    console.log("user2 데이터 : "+user2);
 
     $.ajax({
-        method : 'GET',
+        method : 'POST',
         url : '/chat/'+dataID,
-        data : {_id:dataID,user:dataUser,val:dataVal}
+        data : {_id:dataID, user1:user1, user2:user2}
     }).done(function(결과){
         console.log('ajax get 요청 성공했습니다.');
+        window.location.replace('/chat/'+dataID);
 
     }).fail(function(xhr, textStatus, errorThrown){
         console.log(xhr, textStatus, errorThrown);
     });
+
 });
 
 $("#search").click(function(){
@@ -95,10 +97,9 @@ $("#search").click(function(){
             <a href="/edit/<%= posts[i]._id %>" class="btn btn-outline-success editBtn">수정하기</a>
             <% if(loginName){ %>
                 <% if(loginName.id !== locals.posts[i].작성자){ %>
-                    <button id="chatBtn" class="btn btn-outline-success editBtn float-right"
-                    data-id="<%= posts[i]._id %>" data-user="test" data-val="123"
-                    >샘플 데이터 버튼</button>
-                    <a href="/chat/<%= posts[i]._id %>" class="btn btn-outline-success editBtn float-right">채팅방</a>
+                    <button class="btn btn-outline-success editBtn float-right chatBtn"
+                    data-id="<%= posts[i]._id %>" data-user1="<%= posts[i].작성자 %>"
+                    >채팅방</button>
                 <% } %>
             <% } %>
             <% if(!loginName){ %>
