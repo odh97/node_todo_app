@@ -45,17 +45,15 @@ $('.chatBtn').click(function(e){
 
     let dataID = e.target.dataset.id;
     let user1 = e.target.dataset.user1;
-    let user2 = e.target.dataset.user2;
 
     console.log(e.target.dataset);
     console.log("ID 데이터 : "+dataID);
     console.log("user1 데이터 : "+user1);
-    console.log("user2 데이터 : "+user2);
 
     $.ajax({
         method : 'POST',
         url : '/chat/'+dataID,
-        data : {_id:dataID, user1:user1, user2:user2}
+        data : {_id:dataID, user1:user1}
     }).done(function(결과){
         console.log('ajax get 요청 성공했습니다.');
         window.location.replace('/chat/'+dataID);
