@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous" />
+<link rel="stylesheet" href="/public/main.css" />
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+<title>채팅 리스트</title>
+</head>
+<style>
+/* css */
+a{color: black;}
+a:hover{color: black;text-decoration: none;}
+</style>
+<script>
+// script
+// ajax 서버 통신 방법
+// 가장큰 장점 : 새로고침 없이도 서버랑 통신이 가능하다.
+window.onload = function(){
+
+
+};
+
+</script>
+<body>
+<!-- header -->
+<%-include('nav.ejs', {loginName}) %>
+<!-- //header -->
+<div class="container">
+    <h3 class="text-center my-3">채팅방</h3>
+</div>
+
+<div class="container">
+    <ul class="list-group">
+        <% if(chatRoom.length === 0) { %>
+        <p class="text-center" style="opacity: 0.4;">다른 유저와 대화를 나눠 보세요.</p>
+        <% } %>
+
+        <% if(chatRoom.length > 0) { %>
+            <% for(let i=0; i < chatRoom.length; i++){ %>
+            <li class="list-group-item">
+                <!-- if문으로 title 없을 경우 user.name 채팅방으로 표시 -->
+                <!-- if문으로 title 없을 경우 user.name 채팅방으로 표시 -->
+                <!-- if문으로 title 없을 경우 user.name 채팅방으로 표시 -->
+                <h4>방제목 : <%= chatRoom[i].member %></h4>
+                <p>마지막 내용 : <%= chatRoom[i].날짜 %></p>
+                
+                <!-- 데이터 조회 for문으로 조회할지 고민 -->
+                <!-- 데이터 조회 for문으로 조회할지 고민 -->
+                <!-- 데이터 조회 for문으로 조회할지 고민 -->
+                <!-- 데이터 조회 for문으로 조회할지 고민 -->
+                <!-- 데이터 조회 for문으로 조회할지 고민 -->
+                <% if(loginName.id !== locals.chatRoom[i].작성자){ %>
+                    <a href="/chat/<%= chatRoom[i]._id %>/?userName=<%= chatRoom[i].작성자 %>"
+                        class="btn btn-outline-success editBtn float-right chatBtn"
+                        >채팅방
+                    </a>
+                <% } %>
+            </li>
+            <% } %>
+        <% } %>
+    </ul>
+</div>
+
+</body>
+</html>

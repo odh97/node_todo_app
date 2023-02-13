@@ -16,11 +16,20 @@
         </li>
         <li class="nav-item">
             <% if(locals.loginName === null){ %>
+                <a class="nav-link" href="/login">chat</a>
+            <% } %>
+
+            <% if(locals.loginName !== null){ %>
+                <a class="nav-link" href="/chatList">chat</a>
+            <% } %>
+        </li>
+        <li class="nav-item">
+            <% if(locals.loginName === null){ %>
                 <a class="nav-link" href="/login">로그인</a>
             <% } %>
 
             <% if(locals.loginName !== null){ %>
-                <a class="nav-link" href="/mypage"><%= loginName.id %></a>
+                <a class="nav-link" href="/mypage"><%= loginName.id %> 님</a>
             <% } %>
         </li>
         </ul>

@@ -41,28 +41,28 @@ $('.delete').click(function(e){
     });
 });
 
-$('.chatBtn').click(function(e){
+// $('.chatBtn').click(function(e){
 
-    let dataID = e.target.dataset.id;
-    let user1 = e.target.dataset.user1;
+//     let dataID = e.target.dataset.id;
+//     let user1 = e.target.dataset.user1;
 
-    console.log(e.target.dataset);
-    console.log("ID 데이터 : "+dataID);
-    console.log("user1 데이터 : "+user1);
+//     console.log(e.target.dataset);
+//     console.log("ID 데이터 : "+dataID);
+//     console.log("user1 데이터 : "+user1);
 
-    $.ajax({
-        method : 'POST',
-        url : '/chat/'+dataID,
-        data : {_id:dataID, user1:user1}
-    }).done(function(결과){
-        console.log('ajax get 요청 성공했습니다.');
-        window.location.replace('/chat/'+dataID);
+//     $.ajax({
+//         method : 'POST',
+//         url : '/chat/'+dataID,
+//         data : {_id:dataID, user1:user1}
+//     }).done(function(결과){
+//         console.log('ajax get 요청 성공했습니다.');
+//         window.location.replace('/chat/'+dataID+'?user='+user1);
 
-    }).fail(function(xhr, textStatus, errorThrown){
-        console.log(xhr, textStatus, errorThrown);
-    });
+//     }).fail(function(xhr, textStatus, errorThrown){
+//         console.log(xhr, textStatus, errorThrown);
+//     });
 
-});
+// });
 
 $("#search").click(function(){
     let searchVal = $('#search-input').val();
@@ -95,9 +95,14 @@ $("#search").click(function(){
             <a href="/edit/<%= posts[i]._id %>" class="btn btn-outline-success editBtn">수정하기</a>
             <% if(loginName){ %>
                 <% if(loginName.id !== locals.posts[i].작성자){ %>
-                    <button class="btn btn-outline-success editBtn float-right chatBtn"
-                    data-id="<%= posts[i]._id %>" data-user1="<%= posts[i].작성자 %>"
-                    >채팅방</button>
+                    <!-- <button class="btn btn-outline-success editBtn float-right chatBtn"
+                            data-id="<%= posts[i]._id %>" data-user1="<%= posts[i].작성자 %>"
+                            >채팅방
+                    </button> -->
+                    <a href="/chat/<%= posts[i]._id %>/?userName=<%= posts[i].작성자 %>"
+                       class="btn btn-outline-success editBtn float-right chatBtn"
+                       >채팅방
+                    </a>
                 <% } %>
             <% } %>
             <% if(!loginName){ %>
@@ -107,10 +112,6 @@ $("#search").click(function(){
         <% } %>
     </ul>
 </div>
-
-
-<!-- <h4>할일 제목 : <%= posts[0].제목 %></h4>  -->
-<!-- <p>할일 마감날짜 : <%= posts[0].날짜 %></p> -->
 
 </body>
 </html>

@@ -206,7 +206,7 @@ function loginCheck(req, res, next){
         req.loginName = req.user;
 
         console.log("미들웨어 데이터");
-        console.log(req.loginName.id);
+        console.log("loginName : "+ req.loginName.id);
         
         console.log("=================  미들웨어 종료  =================");
 
@@ -217,7 +217,7 @@ function loginCheck(req, res, next){
         req.loginName = null;
 
         console.log("미들웨어 데이터");
-        console.log(req.loginName);
+        console.log("loginName : "+ req.loginName);
 
         console.log("=================  미들웨어 종료  =================");
 
@@ -334,6 +334,7 @@ var storage = multer.diskStorage({
 });
 
 var path = require('path');
+const { checkPrimeSync } = require('crypto');
 
 var upload = multer({
     storage: storage,
@@ -363,52 +364,61 @@ app.get('/image/:imageName', (요청, 응답)=>{
     응답.sendFile(__dirname + '/public/image/' + 요청.params.imageName);
 });
 
-app.get('/chat/:id', (요청, 응답)=>{
-    console.log("===============chat GET 시작===============");
-    console.log("요청body");
-    console.log(요청.body);
-    console.log("요청.params");
-    console.log(요청.params);
-    console.log("요청.user");
-    console.log(요청.user);
-    console.log("요청body 종료");
 
+
+
+
+
+
+
+
+
+
+
+app.get('/chatList', (요청, 응답)=>{
     // DB에 저장된 데이터 꺼내기
-    db.collection('chat').find().toArray(function(에러, 결과){
-        응답.render('chat.ejs', { chatList : 결과, id값 : 요청.params.id, loginName : 요청.loginName });
-    });
-
-
-    
-    //컬랙션 조회 2개 하는 방법 샘플
-    // DB에 저장된 데이터 꺼내기
-    // db.collection('1번 컬랙션').find().toArray(function(에러, 결과1){
-    //     db.collection('2번 컬랙션').find().toArray(function(에러, 결과2){
-    //         응답.render('chat.ejs', { posts1 : 결과1, posts2 : 결과2 });
-    //     });
-    // });
-});
-
-app.post('/chat/:id', (요청, 응답)=>{
-    console.log("===============chat POST 시작===============");
-
-    console.log("요청body");
-    console.log(요청.body);
-    console.log("요청.params");
-    console.log(요청.params);
-    console.log("요청.user");
-    console.log(요청.user);
-    console.log("요청body 종료");
-
-    // DB에 저장된 데이터 꺼내기 (채팅룸 조회만 하기)
-    db.collection('chatRoom').find({ $or: [ { member : 요청.user.id+","+요청.body.user1 }, { member : 요청.body.user1+","+요청.user.id } ] }).toArray(function(에러, 결과){
+    db.collection('chatRoom').find({ member : 요청.user.id }).toArray(function(에러, 결과){
         console.log("DB chatRoom 데이터 조회");
         console.log(결과);
 
-        if(결과.length > 0){
+        응답.render('chatList.ejs', {loginName : 요청.loginName, chatRoom : 결과})
+    });
+});
+
+app.get('/chat/:id', (요청, 응답)=>{
+    console.log("===============chat GET 시작===============");
+    console.log("요청.params");
+    console.log(요청.params);
+    console.log("요청.query");
+    console.log(요청.query);
+    console.log(요청.query.userName);
+    console.log("요청.user");
+    console.log(요청.user);
+    console.log("요청body 종료");
+
+    let chatRoomData = null;
+
+    // DB에 저장된 데이터 꺼내기 (채팅룸 조회만 하기)
+    db.collection('chatRoom').find({ member : 요청.user.id }).toArray(function(에러, 결과1){
+        console.log("DB chatRoom 데이터 조회");
+        console.log(결과1);
+
+        // DB chatRoom 데이터 체크
+        for(i=0; 결과1.length > i; i++){
+            for(k=0; 결과1[i].member.length > k; k++){
+
+                if(결과1[i].member[k] !== 요청.user.id && 결과1[i].member[k] === 요청.query.userName){
+                    chatRoomData = 결과1[i].member;
+                    console.log("데이터 확인 완료 : " + chatRoomData);
+                }
+
+            }
+        }
+        
+        // DB chatRoom 조회 및 생성
+        if(결과1.length > 0 && chatRoomData !== null){
             console.log("기존 데이터 확인 완료");
 
-            응답.send("chat start");
         }else{
             console.log("새로운 채팅룸 생성");
 
@@ -416,13 +426,22 @@ app.post('/chat/:id', (요청, 응답)=>{
             let toDay = day.toLocaleDateString();
 
             // DB 저장하기 (채팅룸 없으면 생성)
-            db.collection('chatRoom').insertOne( { member : 요청.user.id+","+요청.body.user1 , title : null, toDay : toDay}, function(에러, 결과){
-                console.log('DB chatRoom');
-                if(에러){console.log(에러)}
+            db.collection('chatRoom').insertOne( { member : [요청.user.id, 요청.query.userName] , title : null, toDay : toDay }, function(에러, 생성결과){
+                if(에러){return console.log(에러)}
 
-                응답.send("chat start");
+                console.log('DB new chatRoom');
+                chatRoomData = { member : [요청.user.id, 요청.query.userName] , title : null, toDay : toDay };
             });
         }
+        console.log("!!!!!!DB chatRoom 조회 및 생성 종료!!!!");
+        console.log(chatRoomData);
+
+        // DB에 저장된 데이터 꺼내기
+        db.collection('chat').find({ $or: [ { member : 요청.query.userName }, { member : 요청.user.id } ] }).toArray(function(에러, 결과2){
+            console.log("chat list 조회");
+            console.log(결과2);
+            응답.render('chat.ejs', { chatList : 결과2, paramsData : 요청.params.id , user : 요청.query.userName, loginName : 요청.loginName });
+        });
     });
 
 });
@@ -437,9 +456,10 @@ app.post('/chatEnter', (요청, 응답)=>{
     console.log("body 부분 종료");
 
     // DB저장하기
-    db.collection('chat').insertOne( { chatNumber : 요청.body.id, name : 요청.user.id, comment : 요청.body.chat}, function(에러, 결과){
+    db.collection('chat').insertOne( { member : [요청.user.id, 요청.body.user], name : 요청.user.id, comment : 요청.body.chat}, function(에러, 결과){
         console.log('채팅 입력 완료');
-        응답.redirect('/chat/'+요청.body.id);
+        console.log(결과);
+        응답.redirect('/chat/'+요청.body.paramsData);
     });
 });
 
