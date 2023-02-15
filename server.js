@@ -377,15 +377,28 @@ app.get('/image/:imageName', (요청, 응답)=>{
 
 app.get('/chatList', (요청, 응답)=>{
     // DB에 저장된 데이터 꺼내기
-    db.collection('chatRoom').find({ member : 요청.user.id }).toArray(function(에러, 결과){
+    db.collection('chatRoom').find({ member : 요청.user.id }).toArray(function(에러, 결과1){
         console.log("DB chatRoom 데이터 조회");
-        console.log(결과);
+        console.log(결과1);
 
-        응답.render('chatList.ejs', {loginName : 요청.loginName, chatRoom : 결과})
+        db.collection('post').find().toArray(function(에러, 결과2){
+            console.log("DB post 데이터 조회");
+            console.log(결과2);
+
+            db.collection('chat').find({ member : 요청.user.id }).toArray(function(에러, 결과3){
+                console.log("chat 데이터 조회");
+                console.log(결과3);
+                응답.render('chatList.ejs', {loginName : 요청.loginName, chatRoom : 결과1})
+            });
+        });
     });
 });
 
-app.get('/chat/:id', (요청, 응답)=>{
+
+
+
+
+app.get('/chat', (요청, 응답)=>{
     console.log("===============chat GET 시작===============");
     console.log("요청.params");
     console.log(요청.params);
@@ -398,8 +411,8 @@ app.get('/chat/:id', (요청, 응답)=>{
 
     let chatRoomData = null;
 
-    // DB에 저장된 데이터 꺼내기 (채팅룸 조회만 하기)
     db.collection('chatRoom').find({ member : 요청.user.id }).toArray(function(에러, 결과1){
+        // DB에 저장된 데이터 꺼내기 (채팅룸 조회만 하기)
         console.log("DB chatRoom 데이터 조회");
         console.log(결과1);
 
@@ -437,10 +450,10 @@ app.get('/chat/:id', (요청, 응답)=>{
         console.log(chatRoomData);
 
         // DB에 저장된 데이터 꺼내기
-        db.collection('chat').find({ $or: [ { member : 요청.query.userName }, { member : 요청.user.id } ] }).toArray(function(에러, 결과2){
+        db.collection('chat').find({ member : [요청.user.id, 요청.query.userName] }).toArray(function(에러, 결과2){
             console.log("chat list 조회");
             console.log(결과2);
-            응답.render('chat.ejs', { chatList : 결과2, paramsData : 요청.params.id , user : 요청.query.userName, loginName : 요청.loginName });
+            응답.render('chat.ejs', { chatList : 결과2, user : 요청.query.userName, loginName : 요청.loginName });
         });
     });
 
@@ -459,7 +472,7 @@ app.post('/chatEnter', (요청, 응답)=>{
     db.collection('chat').insertOne( { member : [요청.user.id, 요청.body.user], name : 요청.user.id, comment : 요청.body.chat}, function(에러, 결과){
         console.log('채팅 입력 완료');
         console.log(결과);
-        응답.redirect('/chat/'+요청.body.paramsData);
+        응답.redirect('/chat?userName='+요청.body.user);
     });
 });
 

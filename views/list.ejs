@@ -99,7 +99,7 @@ $("#search").click(function(){
                             data-id="<%= posts[i]._id %>" data-user1="<%= posts[i].작성자 %>"
                             >채팅방
                     </button> -->
-                    <a href="/chat/<%= posts[i]._id %>/?userName=<%= posts[i].작성자 %>"
+                    <a href="/chat?userName=<%= posts[i].작성자 %>"
                        class="btn btn-outline-success editBtn float-right chatBtn"
                        >채팅방
                     </a>

@@ -41,24 +41,40 @@ window.onload = function(){
         <% } %>
 
         <% if(chatRoom.length > 0) { %>
-            <% for(let i=0; i < chatRoom.length; i++){ %>
+            <% for(let i=0; chatRoom.length > i; i++){ %>
             <li class="list-group-item">
-                <!-- if문으로 title 없을 경우 user.name 채팅방으로 표시 -->
-                <!-- if문으로 title 없을 경우 user.name 채팅방으로 표시 -->
-                <!-- if문으로 title 없을 경우 user.name 채팅방으로 표시 -->
-                <h4>방제목 : <%= chatRoom[i].member %></h4>
+                <!-- title -->
+                <% if(chatRoom[i].title === null){ %>
+                <h4>
+                    <% for(let k=0; chatRoom[i].member.length > k; k++){ %>
+                        <% if(chatRoom[i].member[k] !== loginName.id){ %>
+                            <%= chatRoom[i].member[k] %>
+                        <% } %>
+                    <% } %>
+                </h4>
+                <% } %>
+
+                <% if(chatRoom[i].title !== null){ %>
+                <h4><%= chatRoom[i].title %></h4>
+                <% } %>
+
+                <!-- comment -->
+                <!-- 채팅 내용(chat) 최신 마지막 comment 가져오기 -->
+                <!-- 채팅 내용(chat) 최신 마지막 comment 가져오기 -->
+                <!-- 채팅 내용(chat) 최신 마지막 comment 가져오기 -->
+                <% let testData = "부끄러" %>
+                <% console.log(testData); %>
                 <p>마지막 내용 : <%= chatRoom[i].날짜 %></p>
                 
-                <!-- 데이터 조회 for문으로 조회할지 고민 -->
-                <!-- 데이터 조회 for문으로 조회할지 고민 -->
-                <!-- 데이터 조회 for문으로 조회할지 고민 -->
-                <!-- 데이터 조회 for문으로 조회할지 고민 -->
-                <!-- 데이터 조회 for문으로 조회할지 고민 -->
-                <% if(loginName.id !== locals.chatRoom[i].작성자){ %>
-                    <a href="/chat/<%= chatRoom[i]._id %>/?userName=<%= chatRoom[i].작성자 %>"
-                        class="btn btn-outline-success editBtn float-right chatBtn"
-                        >채팅방
-                    </a>
+
+                <!-- chatRoom btn -->
+                <% for(let k=0; chatRoom[i].member.length > k; k++){ %>
+                    <% if(chatRoom[i].member[k] !== loginName.id){ %>
+                        <a href="/chat?userName=<%= chatRoom[i].member[k] %>"
+                            class="btn btn-outline-success editBtn float-right chatBtn"
+                            >채팅방
+                        </a>
+                    <% } %>
                 <% } %>
             </li>
             <% } %>
