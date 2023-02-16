@@ -381,15 +381,10 @@ app.get('/chatList', (요청, 응답)=>{
         console.log("DB chatRoom 데이터 조회");
         console.log(결과1);
 
-        db.collection('post').find().toArray(function(에러, 결과2){
-            console.log("DB post 데이터 조회");
+        db.collection('chat').find({ member : 요청.user.id }).toArray(function(에러, 결과2){
+            console.log("chat 데이터 조회");
             console.log(결과2);
-
-            db.collection('chat').find({ member : 요청.user.id }).toArray(function(에러, 결과3){
-                console.log("chat 데이터 조회");
-                console.log(결과3);
-                응답.render('chatList.ejs', {loginName : 요청.loginName, chatRoom : 결과1})
-            });
+            응답.render('chatList.ejs', {loginName : 요청.loginName, chatRoom : 결과1, chatList : 결과2})
         });
     });
 });

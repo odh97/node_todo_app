@@ -91,8 +91,10 @@ $("#search").click(function(){
                 <h4>할일 제목 : <%= posts[i].제목 %></h4>
                 <p>할일 마감날짜 : <%= posts[i].날짜 %></p>
             </a>
-            <button type="button" class="btn btn-outline-danger delete" data-id="<%= posts[i]._id %>">삭제하기</button>
-            <a href="/edit/<%= posts[i]._id %>" class="btn btn-outline-success editBtn">수정하기</a>
+            <%if(loginName.id === locals.posts[i].작성자){%>
+                <button type="button" class="btn btn-outline-danger delete" data-id="<%= posts[i]._id %>">삭제하기</button>
+                <a href="/edit/<%= posts[i]._id %>" class="btn btn-outline-success editBtn">수정하기</a>
+            <%}%>
             <% if(loginName){ %>
                 <% if(loginName.id !== locals.posts[i].작성자){ %>
                     <!-- <button class="btn btn-outline-success editBtn float-right chatBtn"

@@ -42,16 +42,20 @@ window.onload = function(){
 
         <% if(chatRoom.length > 0) { %>
             <% for(let i=0; chatRoom.length > i; i++){ %>
+            <%
+                // chatRoom user name
+                let userNm = null;
+
+                for(let k=0; chatRoom[i].member.length > k; k++){
+                    if(chatRoom[i].member[k] !== loginName.id){
+                        userNm = chatRoom[i].member[k]
+                    }
+                }
+            %>
             <li class="list-group-item">
                 <!-- title -->
                 <% if(chatRoom[i].title === null){ %>
-                <h4>
-                    <% for(let k=0; chatRoom[i].member.length > k; k++){ %>
-                        <% if(chatRoom[i].member[k] !== loginName.id){ %>
-                            <%= chatRoom[i].member[k] %>
-                        <% } %>
-                    <% } %>
-                </h4>
+                <h4><%= userNm %></h4>
                 <% } %>
 
                 <% if(chatRoom[i].title !== null){ %>
@@ -59,23 +63,37 @@ window.onload = function(){
                 <% } %>
 
                 <!-- comment -->
-                <!-- 채팅 내용(chat) 최신 마지막 comment 가져오기 -->
-                <!-- 채팅 내용(chat) 최신 마지막 comment 가져오기 -->
-                <!-- 채팅 내용(chat) 최신 마지막 comment 가져오기 -->
-                <% let testData = "부끄러" %>
-                <% console.log(testData); %>
-                <p>마지막 내용 : <%= chatRoom[i].날짜 %></p>
+                <%
+                    // loginName.id (로그인 ID) / userNm (채팅 상대)
+                    let memberCheck1 = [loginName.id, userNm];
+                    let memberCheck2 = [userNm, loginName.id];
+                    let chatArr = [];
+                    let lastComment = undefined;
+
+                    for(let k=0; chatList.length > k; k++){
+                        if(chatList[k].member.toString() === memberCheck1.toString() || chatList[k].member.toString() === memberCheck2.toString()){
+                            chatArr.push(chatList[k].comment);
+                        }
+                    }
+                    lastComment = chatArr[chatArr.length - 1];
+                %>
+                
+                <% if(lastComment === undefined){%>
+                    <p class="d-inline-block" style="opacity:0.4">상대방과 대화를 나눠보세요!</p>
+                <%}%>
+                <% if(lastComment !== undefined){%>
+                    <p class="d-inline-block"><%= lastComment %></p>
+                <%}%>
+                <!-- chatRoom btn -->
+                <a href="/chat?userName=<%= userNm %>"
+                    class="btn btn-outline-success editBtn float-right chatBtn float-right d-inline-block"
+                    >채팅방
+                </a>
+
+                
                 
 
-                <!-- chatRoom btn -->
-                <% for(let k=0; chatRoom[i].member.length > k; k++){ %>
-                    <% if(chatRoom[i].member[k] !== loginName.id){ %>
-                        <a href="/chat?userName=<%= chatRoom[i].member[k] %>"
-                            class="btn btn-outline-success editBtn float-right chatBtn"
-                            >채팅방
-                        </a>
-                    <% } %>
-                <% } %>
+
             </li>
             <% } %>
         <% } %>
