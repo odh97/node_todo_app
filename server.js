@@ -157,6 +157,8 @@ app.get('/login', function(요청, 응답){
     응답.render('login.ejs',{loginName : 요청.loginName});
 });
 
+
+
 app.post('/login', passport.authenticate('local', {
     failureRedirect : '/fail'
     }), function(요청, 응답){
@@ -372,8 +374,13 @@ app.get('/image/:imageName', (요청, 응답)=>{
 
 
 
+app.get('/routerList', (요청, 응답)=>{
+    응답.render('routerList.ejs', {loginName : 요청.loginName, 사용자 : 요청.user});
+});
 
-
+app.get('/cookiestest', (요청, 응답)=>{
+    응답.render('cookiestest.ejs', {loginName : 요청.loginName, 사용자 : 요청.user});
+});
 
 app.get('/chatList', (요청, 응답)=>{
     // DB에 저장된 데이터 꺼내기
@@ -388,10 +395,6 @@ app.get('/chatList', (요청, 응답)=>{
         });
     });
 });
-
-
-
-
 
 app.get('/chat', (요청, 응답)=>{
     console.log("===============chat GET 시작===============");
@@ -473,5 +476,10 @@ app.post('/chatEnter', (요청, 응답)=>{
 
 
 
-
+app.get('/logout', function(req, res, next) {
+    req.logout(function(err) {
+      if (err) { return next(err); }
+      res.redirect('/');
+    });
+});
 

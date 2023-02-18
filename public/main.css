@@ -1,3 +1,32 @@
+/* reset */
+a{color: black;}
+a:hover{color: black;text-decoration: none;}
+li{
+    list-style: none;
+}
+
 h3{
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.loginNav{
+    position: relative;
+}
+.loginNav > div{
+    width: 130px;
+    position: absolute; 
+    right: 0;
+    display: none;
+}
+.loginNav:hover > div{
+    width: 130px;
+    position: absolute;
+    right: 0;
+    display: block;
+}
+.loginNav:hover > div a:nth-child(1):hover{
+    background-color: #b8daff;
+}
+.loginNav:hover > div a:last-child:hover{
+   background-color: #f5c6cb;
 }
