@@ -448,7 +448,7 @@ app.get('/chat', (요청, 응답)=>{
         console.log(chatRoomData);
 
         // DB에 저장된 데이터 꺼내기
-        db.collection('chat').find({ member : [요청.user.id, 요청.query.userName] }).toArray(function(에러, 결과2){
+        db.collection('chat').find({ $or: [ { member : [요청.user.id, 요청.query.userName] }, { member : [요청.query.userName, 요청.user.id] } ] }).toArray(function(에러, 결과2){
             console.log("chat list 조회");
             console.log(결과2);
             응답.render('chat.ejs', { chatList : 결과2, user : 요청.query.userName, loginName : 요청.loginName });
@@ -456,6 +456,9 @@ app.get('/chat', (요청, 응답)=>{
     });
 
 });
+
+
+
 
 app.post('/chatEnter', (요청, 응답)=>{
     console.log("======== chatEnter 시작 ===========");
@@ -475,11 +478,10 @@ app.post('/chatEnter', (요청, 응답)=>{
 });
 
 
-
-app.get('/logout', function(req, res, next) {
-    req.logout(function(err) {
+app.get('/logout', function(요청, 응답, next) {
+    요청.logout(function(err) {
       if (err) { return next(err); }
-      res.redirect('/');
+      응답.redirect('/');
     });
 });
 

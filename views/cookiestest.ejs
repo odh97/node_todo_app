@@ -13,8 +13,14 @@
 </head>
 <style>
 /* css */
-a{color: black;}
-a:hover{color: black;text-decoration: none;}
+.popup{
+    position: fixed;
+    left: 100px;
+    bottom: 100px;
+    border: 1px solid #ebebeb;
+    padding: 40px 60px;
+    display: none;
+}
 </style>
 <script>
 // script
@@ -57,7 +63,7 @@ window.onload = function(){
     
     let createCookieFnBtn = document.getElementById('createCookieFn');
     createCookieFnBtn.addEventListener('click', function(){
-        createCookieFn('CookieName', 'ABC', 7);
+        createCookieFn('ABCcorp', 'Main', 3);
     })
     
     
@@ -76,6 +82,102 @@ window.onload = function(){
     delCookieBtn.addEventListener('click', function(){
         delCookiefn();
     })
+
+    //쿠키 삭제
+    function delCookieParamFn(name){
+        date.setDate(date.getDate() - 1);
+
+        let setCookie = '';
+        setCookie += name+'=ABC;';
+        setCookie += 'Expires='+date.toUTCString();
+
+        document.cookie = setCookie; //쿠키 생성 및 설정
+    }
+
+    let delCookieParamBtn = document.getElementById('delCookieParam');
+    delCookieParamBtn.addEventListener('click', function(){
+        delCookieParamFn('ABCcorp');
+    })
+
+    //checkCookie
+    console.log(document.cookie);
+    function getCookie(name){
+        let cookieArr = document.cookie.split('; ');
+        console.log(cookieArr);
+        
+        console.log(cookieArr.indexOf("CookieName=ABC"));
+
+        if(cookieArr.indexOf("CookieName=ABC") >= 0){
+            console.log(cookieArr[cookieArr.indexOf("CookieName=ABC")]);
+        }else{
+            console.log("없습니다.");
+        }
+    }
+    getCookie('test');
+
+    //popup 기능 구현
+    let myPopup = document.querySelector('.popup');
+        checkBox = document.querySelector('#popup');
+        popupClose = document.querySelector('.closebtn');
+
+    //쿠키 생성
+    function popupCookie(name, value, day){
+        date.setDate(date.getDate() + day);
+
+        let setCookie = '';
+        setCookie += name + "=" + value + ";" ;
+        setCookie += 'Expires='+date.toUTCString();
+
+        document.cookie = setCookie; //쿠키 생성 및 설정
+        console.log(document.cookie);
+        
+    }
+    
+    //쿠키 삭제
+    function popupDelCookie(name){
+        date.setDate(date.getDate() - 1);
+
+        let setCookie = '';
+        setCookie += name+'=Main;';
+        setCookie += 'Expires='+date.toUTCString();
+
+        document.cookie = setCookie; //쿠키 생성 및 설정
+    }
+
+    //쿠키 확인
+    function checkCookie(name){
+        let cookieArr = document.cookie.split('; ');
+        console.log(cookieArr);
+        let visited = false; // 방문 기록 없음
+        
+        if(cookieArr.indexOf(name) >= 0){
+            visited = true;
+            console.log(cookieArr[cookieArr.indexOf(name)]);
+        }else{
+            console.log("없습니다.");
+        }
+
+        if(visited){
+            //재방문
+            myPopup.style.display = 'none';
+        }else{
+            myPopup.style.display = 'block';
+        }
+    }
+    checkCookie('ABC.com');
+
+    //팝업 기능 구현
+    popupClose.addEventListener('click', function(){
+        if(checkBox.checked){
+            popupCookie('ABC.com', 'Main', 1);
+            myPopup.style.display = 'none';
+        }else{
+            myPopup.style.display = 'none';
+            popupDelCookie('ABC.com');
+        }
+    });
+
+
 };
 
 </script>
@@ -91,7 +193,14 @@ window.onload = function(){
     <!-- 쿠키 버튼 -->
     <button id="createCookieFn" class="btn btn-primary">함수로 쿠키 생성 버튼</button>
     <button id="createCookie" class="btn btn-primary">쿠키 생성 버튼</button>
-    <button id="delCookie" class="btn btn-dark">쿠키 삭제 버튼</button>
+    <button id="delCookie" class="btn btn-dark">Cookie 쿠키 삭제 버튼</button>
+    <button id="delCookieParam" class="btn btn-dark">ABCcorp 쿠키 삭제 버튼</button>
+</div>
+<div class="popup">
+    <h3>Hello World</h3>
+    <input type="checkbox" id="popup" />
+    <label for="popup">하루 안보기</label>
+    <button class="closebtn">닫기</button>    
 </div>
 
 </body>

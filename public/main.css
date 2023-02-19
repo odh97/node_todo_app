@@ -21,6 +21,7 @@ h3{
 .loginNav:hover > div{
     width: 130px;
     position: absolute;
+    z-index: 100;
     right: 0;
     display: block;
 }
