@@ -366,14 +366,6 @@ app.get('/image/:imageName', (요청, 응답)=>{
     응답.sendFile(__dirname + '/public/image/' + 요청.params.imageName);
 });
 
-
-
-
-
-
-
-
-
 app.get('/routerList', (요청, 응답)=>{
     응답.render('routerList.ejs', {loginName : 요청.loginName, 사용자 : 요청.user});
 });
@@ -388,7 +380,7 @@ app.get('/chatList', (요청, 응답)=>{
         console.log("DB chatRoom 데이터 조회");
         console.log(결과1);
 
-        db.collection('chat').find({ member : 요청.user.id }).toArray(function(에러, 결과2){
+        db.collection('message').find({ member : 요청.user.id }).toArray(function(에러, 결과2){
             console.log("chat 데이터 조회");
             console.log(결과2);
             응답.render('chatList.ejs', {loginName : 요청.loginName, chatRoom : 결과1, chatList : 결과2})
@@ -430,6 +422,13 @@ app.get('/chat', (요청, 응답)=>{
         if(결과1.length > 0 && chatRoomData !== null){
             console.log("기존 데이터 확인 완료");
 
+            // DB에 저장된 데이터 꺼내기
+            db.collection('message').find({ $or: [ { member : [요청.user.id, 요청.query.userName] }, { member : [요청.query.userName, 요청.user.id] } ] }).toArray(function(에러, 결과2){
+                console.log("chat list 조회");
+                console.log(결과2);
+                응답.render('chat.ejs', { chatList : 결과2, user : 요청.query.userName, loginName : 요청.loginName });
+            });
+
         }else{
             console.log("새로운 채팅룸 생성");
 
@@ -441,23 +440,14 @@ app.get('/chat', (요청, 응답)=>{
                 if(에러){return console.log(에러)}
 
                 console.log('DB new chatRoom');
-                chatRoomData = { member : [요청.user.id, 요청.query.userName] , title : null, toDay : toDay };
+                응답.redirect('/chat?userName='+요청.query.userName);
+                
             });
         }
-        console.log("!!!!!!DB chatRoom 조회 및 생성 종료!!!!");
-        console.log(chatRoomData);
 
-        // DB에 저장된 데이터 꺼내기
-        db.collection('chat').find({ $or: [ { member : [요청.user.id, 요청.query.userName] }, { member : [요청.query.userName, 요청.user.id] } ] }).toArray(function(에러, 결과2){
-            console.log("chat list 조회");
-            console.log(결과2);
-            응답.render('chat.ejs', { chatList : 결과2, user : 요청.query.userName, loginName : 요청.loginName });
-        });
+
     });
-
 });
-
-
 
 
 app.post('/chatEnter', (요청, 응답)=>{
@@ -470,11 +460,24 @@ app.post('/chatEnter', (요청, 응답)=>{
     console.log("body 부분 종료");
 
     // DB저장하기
-    db.collection('chat').insertOne( { member : [요청.user.id, 요청.body.user], name : 요청.user.id, comment : 요청.body.chat}, function(에러, 결과){
+    db.collection('message').insertOne( { member : [요청.user.id, 요청.body.user], name : 요청.user.id, comment : 요청.body.chat}, function(에러, 결과){
         console.log('채팅 입력 완료');
         console.log(결과);
         응답.redirect('/chat?userName='+요청.body.user);
     });
+});
+
+app.get('/message',(요청, 응답)=>{
+
+    응답.writeHead(200, {
+        "Connection": "keep-alive",
+        "Content-Type": "text/event-stream",
+        "Cache-Control": "no-cache",
+    });
+    
+    응답.write('event: test\n');
+    응답.write('data: 안녕하세요\n\n');
+
 });
 
 

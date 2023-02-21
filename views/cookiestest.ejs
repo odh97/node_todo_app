@@ -115,6 +115,11 @@ window.onload = function(){
     }
     getCookie('test');
 
+
+
+
+
+
     //popup 기능 구현
     let myPopup = document.querySelector('.popup');
         checkBox = document.querySelector('#popup');
@@ -164,9 +169,8 @@ window.onload = function(){
             myPopup.style.display = 'block';
         }
     }
-    checkCookie('ABC.com');
+    checkCookie('ABC.com=Main');
 
-    //팝업 기능 구현
     popupClose.addEventListener('click', function(){
         if(checkBox.checked){
             popupCookie('ABC.com', 'Main', 1);
