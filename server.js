@@ -474,9 +474,25 @@ app.get('/message',(요청, 응답)=>{
         "Content-Type": "text/event-stream",
         "Cache-Control": "no-cache",
     });
-    
-    응답.write('event: test\n');
-    응답.write('data: 안녕하세요\n\n');
+
+    console.log("======== message 시작 ===========");
+    console.log("body 부분");
+    console.log("======== 요청.user ========");
+    console.log(요청.user);
+    console.log("======== 요청.body ========");
+    console.log(요청.body);
+    console.log("요청.query");
+    console.log(요청.query.userName);
+    console.log("body 부분 종료");
+
+    // DB에 저장된 데이터 꺼내기
+    db.collection('message').find({ $or: [ { member : [요청.user.id, 요청.query.userName] }, { member : [요청.query.userName, 요청.user.id] } ] }).toArray().then((결과)=>{
+        console.log("chat list 조회");
+        console.log(결과);
+
+        응답.write('event: test\n');
+        응답.write('data:' + JSON.stringify(결과) + '\n\n');
+    });
 
 });
 

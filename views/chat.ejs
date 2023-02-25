@@ -76,30 +76,96 @@ document.addEventListener('keydown', function(event) {
 // SSE 실시간 소통 a태그로 접속 했을때 구현해 보기
 // SSE 실시간 소통 a태그로 접속 했을때 구현해 보기
 
-// let user;
-// let eventSource;   //일단변수 
-// 
-// $('.chatBtn').click(function(){
-  // user = this.dataset.user;
-// 
-  //프론트엔드에서 실시간 소통채널 여는법 
-  // eventSource = new EventSource('/message/' + user);
-  // eventSource.addEventListener('test', function (e){
-    // console.log(e.data);
-  // });
-// 
-// });
+let eventSource = null;
+let user = document.getElementById("userVal").value;
+let msgObj = null;
+
+function eventSourceFn(){
+
+  // 프론트엔드에서 실시간 소통채널 여는법 
+  eventSource = new EventSource( '/message?userName=' + user );
+  eventSource.addEventListener('test', function (e){
+
+    msgObj = JSON.parse(e.data);
+
+    //요소 추가
+    let msgArea = document.getElementById('msgBox');
+
+    for(let i=0; i < msgObj.length; i++){
+
+      let newliTag = document.createElement('li');
+      let newdivTag = document.createElement('div');
+
+      newliTag.setAttribute('class', 'media my-2');
+
+      msgArea.appendChild(newliTag);
+
+
+      newdivTag.innerHTML = msgObj[i].comment;
+      newliTag.appendChild(newdivTag);
+      console.log(msgObj);
+
+    }
+
+  });
+};
+eventSourceFn();
+
+
+
+// <li class="media my-2">
+//   <div class="media-body text-right">
+//     <div class="w-75 float-right">
+//       <p class="border rounded d-inline-block px-2 py-2"></p>
+//     </div>
+//   </div>
+// </li>
+
+// let pTagCount = 1;
+// let hTagCount = 1;
+
+// function create_pTag(){
+//   let tagArea = document.getElementById('tagArea');
+//   let new_pTag = document.createElement('p');
+  
+//   new_pTag.setAttribute('class', 'pTag');
+//   new_pTag.innerHTML = pTagCount+". 추가된 p태그";
+  
+//   tagArea.appendChild(new_pTag);
+  
+//   pTagCount++;
+// }
+
+// function create_hTag(){
+//   let tagArea = document.getElementById('tagArea');
+//   let new_hTag = document.createElement('h'+hTagCount);
+  
+//   new_hTag.innerHTML = "추가된 h"+hTagCount+"태그";
+  
+//   tagArea.appendChild(new_hTag);
+  
+//   if(hTagCount < 6)
+//     hTagCount++;
+// }
+
+
 
 
 };
 </script>
 <body>
-
 <!-- header -->
 <%-include('nav.ejs', {loginName}) %>
 <!-- //header -->
 <div class="container">
   <h3 class="text-center mt-3 pb-3 border-bottom">채팅방</h3>
+
+
+  <ul id="msgBox" class="list-unstyled mb-5">
+    <h3 class="text-center">샘플박스</h3>
+  </ul>
+
+
   <ul class="list-unstyled mb-5">
     
     <% for(let i=0; i < chatList.length; i++){ %>
@@ -133,7 +199,7 @@ document.addEventListener('keydown', function(event) {
   <form  action="/chatEnter" method="POST">
     <div class="input-group mb-3">
       <input type="text" class="form-control" aria-label="Recipient's username" aria-describedby="button-addon2" name="chat" id="chatVal" />
-      <input type="text" class="form-control d-none" aria-label="Recipient's username" aria-describedby="button-addon2" name="user" value="<%= user %>" />
+      <input type="text" class="form-control d-none" aria-label="Recipient's username" aria-describedby="button-addon2" id="userVal" name="user" value="<%= user %>" />
       <div class="input-group-append">
         <button class= "btn btn-outline-secondary toggleBtn offBtn" type="submit" id="button-addon2">등록</button>
       </div>
