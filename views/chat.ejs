@@ -69,85 +69,71 @@ document.addEventListener('keydown', function(event) {
 });
 
 
-// SSE 실시간 소통 a태그로 접속 했을때 구현해 보기
-// SSE 실시간 소통 a태그로 접속 했을때 구현해 보기
-// SSE 실시간 소통 a태그로 접속 했을때 구현해 보기
-// SSE 실시간 소통 a태그로 접속 했을때 구현해 보기
-// SSE 실시간 소통 a태그로 접속 했을때 구현해 보기
-// SSE 실시간 소통 a태그로 접속 했을때 구현해 보기
 
+// SSE 실시간 소통(eventSource)
 let eventSource = null;
-let user = document.getElementById("userVal").value;
 let msgObj = null;
+let chatUser = new URLSearchParams(location.search).get("userName"); //parameter
 
-function eventSourceFn(){
+// 기존 이벤트 소스 삭제
+if(eventSource != undefined){
+  eventSource.close();
+}
 
-  // 프론트엔드에서 실시간 소통채널 여는법 
-  eventSource = new EventSource( '/message?userName=' + user );
-  eventSource.addEventListener('test', function (e){
+// 프론트엔드에서 실시간 소통채널 여는법
+eventSource = new EventSource( '/message?userName=' + chatUser );
+eventSource.addEventListener('test', function(e){
+  
+  msgObj = JSON.parse(e.data);
 
-    msgObj = JSON.parse(e.data);
+  //요소 추가
+  let msgArea = document.getElementById('msgBox');
 
-    //요소 추가
-    let msgArea = document.getElementById('msgBox');
+  msgObj.forEach((a, i) => {
 
-    for(let i=0; i < msgObj.length; i++){
-
+    if(chatUser === a.name){
+      // chatUser
       let newliTag = document.createElement('li');
-      let newdivTag = document.createElement('div');
+      let newdiv1Tag = document.createElement('div');
+      let newdiv2Tag = document.createElement('div');
+      let newh5Tag = document.createElement('h5');
+      let newpTag = document.createElement('p');
 
       newliTag.setAttribute('class', 'media my-2');
+      newdiv1Tag.setAttribute('class', 'media-body');
+      newdiv2Tag.setAttribute('class', 'w-75');
+      newh5Tag.setAttribute('class', 'mt-0 mb-1');
+      newpTag.setAttribute('class', 'border rounded d-inline-block px-2 py-2');
 
+      newh5Tag.innerHTML = a.name;
+      newpTag.innerHTML = a.comment;
+      
       msgArea.appendChild(newliTag);
+      newliTag.appendChild(newdiv1Tag);
+      newdiv1Tag.appendChild(newdiv2Tag);
+      newdiv2Tag.appendChild(newh5Tag);
+      newdiv2Tag.appendChild(newpTag);
+    }
 
-
-      newdivTag.innerHTML = msgObj[i].comment;
-      newliTag.appendChild(newdivTag);
-      console.log(msgObj);
-
+    if(chatUser !== a.name){
+      // my
+      // template
+      let template = document.createElement('li'); //생성
+      template.innerHTML =
+        ` <li class="media my-2">
+            <div class="media-body text-right">
+              <div class="w-75 float-right">
+                  <p class="border rounded d-inline-block px-2 py-2">` + a.comment + `</p>
+              </div>
+            </div>
+          </li> `;
+      msgArea.appendChild(template);
     }
 
   });
-};
-eventSourceFn();
 
 
-
-// <li class="media my-2">
-//   <div class="media-body text-right">
-//     <div class="w-75 float-right">
-//       <p class="border rounded d-inline-block px-2 py-2"></p>
-//     </div>
-//   </div>
-// </li>
-
-// let pTagCount = 1;
-// let hTagCount = 1;
-
-// function create_pTag(){
-//   let tagArea = document.getElementById('tagArea');
-//   let new_pTag = document.createElement('p');
-  
-//   new_pTag.setAttribute('class', 'pTag');
-//   new_pTag.innerHTML = pTagCount+". 추가된 p태그";
-  
-//   tagArea.appendChild(new_pTag);
-  
-//   pTagCount++;
-// }
-
-// function create_hTag(){
-//   let tagArea = document.getElementById('tagArea');
-//   let new_hTag = document.createElement('h'+hTagCount);
-  
-//   new_hTag.innerHTML = "추가된 h"+hTagCount+"태그";
-  
-//   tagArea.appendChild(new_hTag);
-  
-//   if(hTagCount < 6)
-//     hTagCount++;
-// }
-
+});
 
 
 
@@ -158,42 +144,12 @@ eventSourceFn();
 <%-include('nav.ejs', {loginName}) %>
 <!-- //header -->
 <div class="container">
+
   <h3 class="text-center mt-3 pb-3 border-bottom">채팅방</h3>
-
-
+  <!-- 실시간 통신 -->
   <ul id="msgBox" class="list-unstyled mb-5">
-    <h3 class="text-center">샘플박스</h3>
   </ul>
 
-
-  <ul class="list-unstyled mb-5">
-    
-    <% for(let i=0; i < chatList.length; i++){ %>
-      <% if(locals.chatList[i].chatNumber === locals.id값){ %>
-
-        <% if(locals.chatList[i].name === locals.loginName.id){ %>
-          <li class="media my-2">
-            <div class="media-body text-right">
-              <div class="w-75 float-right">
-                  <p class="border rounded d-inline-block px-2 py-2"><%= chatList[i].comment %></p>
-              </div>
-            </div>
-          </li>
-        <% }%>      
-        <% if(locals.chatList[i].name !== locals.loginName.id){ %>
-          <li class="media my-2">
-            <div class="media-body">
-              <div class="w-75">
-                <h5 class="mt-0 mb-1"><%= chatList[i].name %></h5>
-                <p class="border rounded d-inline-block px-2 py-2"><%= chatList[i].comment %></p>
-              </div>
-            </div>
-          </li>
-        <% }%>
-
-      <% } %>
-    <% } %>
-  </ul>
 </div>
 <footer class="container fixed-bottom bg-white">
   <form  action="/chatEnter" method="POST">

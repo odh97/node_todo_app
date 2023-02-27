@@ -463,7 +463,6 @@ app.post('/chatEnter', (요청, 응답)=>{
     db.collection('message').insertOne( { member : [요청.user.id, 요청.body.user], name : 요청.user.id, comment : 요청.body.chat}, function(에러, 결과){
         console.log('채팅 입력 완료');
         console.log(결과);
-        응답.redirect('/chat?userName='+요청.body.user);
     });
 });
 
@@ -492,6 +491,21 @@ app.get('/message',(요청, 응답)=>{
 
         응답.write('event: test\n');
         응답.write('data:' + JSON.stringify(결과) + '\n\n');
+    });
+
+    
+    
+    const pipeline = [
+        { $match: { $or: [ { 'fullDocument.name' :  요청.user.id  }, { 'fullDocument.name' :  요청.query.userName } ] } }
+    ];
+      
+    const changeStream = db.collection('message').watch(pipeline);
+    
+    changeStream.on('change', (result) => {
+        console.log("change data test");
+        console.log(result);
+        응답.write('event: test\n');
+        응답.write('data:' + JSON.stringify([result.fullDocument]) + '\n\n');
     });
 
 });
