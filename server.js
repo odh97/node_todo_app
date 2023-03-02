@@ -5,7 +5,11 @@ const MongoClient = require('mongodb').MongoClient;
 const methodOverride = require('method-override');
 app.use(methodOverride('_method'));
 app.set('view engine', 'ejs');
-require('dotenv').config()
+require('dotenv').config();
+
+const http = require('http').createServer(app);
+const { Server } = require("socket.io");
+const io = new Server(http);
 
 app.use('/public', express.static('public'));
 
@@ -31,7 +35,7 @@ MongoClient.connect(process.env.DB_URL, function(error, client){
     //DB 사용방법
     db = client.db('todoapp');
 
-    app.listen(process.env.PORT, function() {
+    http.listen(process.env.PORT, function() {
         console.log('listening on 8080');
     });
 });
@@ -494,7 +498,6 @@ app.get('/message',(요청, 응답)=>{
     });
 
     
-    
     const pipeline = [
         { $match: { $or: [ { 'fullDocument.name' :  요청.user.id  }, { 'fullDocument.name' :  요청.query.userName } ] } }
     ];
@@ -516,5 +519,47 @@ app.get('/logout', function(요청, 응답, next) {
       if (err) { return next(err); }
       응답.redirect('/');
     });
+    
 });
 
+app.get('/socket',function(요청, 응답){
+    응답.render('socket.ejs', {loginName : 요청.loginName});
+    
+});
+
+io.on('connection', function(socket){
+    console.log("유저 접속 확인(socket.io start)");
+    console.log(socket.id);
+
+    /* 단체방 구현해보기 */
+    // 단체방 생성
+    socket.on('joinRoom', function(data){
+        console.log("=== joinRoom start ===");
+        console.log(data);
+
+        socket.join(data);
+    });
+
+    // 단체방 채팅 기능
+    for(let i=1; i < 4; i++){
+        socket.on('startRoom'+i, function(data){
+            console.log("=== joinRoom"+i+" chat ===");
+            console.log(data);
+    
+            io.to('startRoom'+i).emit('broadcast', data);
+        });    
+    }
+
+    // 채팅 기능
+    socket.on('user-send', function(data){
+        console.log("=== user-send start ===");
+        console.log(data);
+
+        io.emit('broadcast', data);
+    });
+    
+    // 1대1 단독 채팅방 개설할때 사용
+    // socket.on('user-send', function(data){
+    //      io.to(socket.id).emit('broadcast', '안녕하세요');
+    // });
+});
