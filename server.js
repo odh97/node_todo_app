@@ -477,7 +477,7 @@ app.get('/message',(요청, 응답)=>{
         "Content-Type": "text/event-stream",
         "Cache-Control": "no-cache",
     });
-
+    
     console.log("======== message 시작 ===========");
     console.log("body 부분");
     console.log("======== 요청.user ========");

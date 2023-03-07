@@ -11,5 +11,23 @@
     "passport": "^0.6.0",
     "passport-local": "^1.0.0",
     "socket.io": "^4.6.1"
-  }
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "name": "todoapp",
+  "version": "1.0.0",
+  "main": "server.js",
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/odh97/todoapp.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/odh97/todoapp/issues"
+  },
+  "homepage": "https://github.com/odh97/todoapp#readme",
+  "description": ""
 }
