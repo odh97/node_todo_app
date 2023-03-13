@@ -41,7 +41,6 @@ MongoClient.connect(process.env.DB_URL, function(error, client){
 });
 
 
-
 //누군가가 /pet 으로 방문하면..
 //pet 관련된 안내문을 띄워주자
 

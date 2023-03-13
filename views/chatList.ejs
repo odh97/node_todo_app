@@ -17,8 +17,19 @@
 // 가장큰 장점 : 새로고침 없이도 서버랑 통신이 가능하다.
 window.onload = function(){
 
-};
 
+
+};
+window.onpageshow = function(event){
+
+    if (event.persisted || (window.performance && window.performance.navigation.type == 2)) {
+        window.location.reload();
+        console.log('BFCahe로부터 복원됨');
+     } else {
+        console.log('새로 열린 페이지');
+     }
+
+}
 </script>
 <body>
 <!-- header -->
