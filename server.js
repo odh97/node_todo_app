@@ -500,7 +500,7 @@ app.get('/message',(요청, 응답)=>{
     const pipeline = [
         { $match: { $or: [ { 'fullDocument.name' :  요청.user.id  }, { 'fullDocument.name' :  요청.query.userName } ] } }
     ];
-      
+
     const changeStream = db.collection('message').watch(pipeline);
     
     changeStream.on('change', (result) => {

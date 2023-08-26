@@ -15,37 +15,27 @@
 body{
     text-align: center;
 }
+h4{margin: 50px 0;}
+h3{font-size: 24px;}
+.container div{margin: 0 auto;}
 </style>
 <body>
 <!-- header -->
 <%-include('nav.ejs', {loginName}) %>
 <!-- //header -->
-<h4>Home</h4>
+<h4>Todo List</h4>
 
 <main class="container">
-    <h4 class="mt-4">샘플 계정입니다.</h4>
+    <h3 class="mt-4">샘플 계정입니다.</h3>
     <% for(let i=0; 3 > i; i++){ %>
-        <div class="card mb-2">
+        <div class="card mb-2 w-50">
             <div class="card-body">
                 아이디 : <%= posts[i].id %> <br/>
                 비밀번호 : <%= posts[i].pw %>
             </div>
         </div>
     <% } %>
-    
-    
-    <button type="button" class="btn btn-primary">Primary</button>
-    <button type="button" class="btn btn-secondary">Secondary</button>
-    <button type="button" class="btn btn-success">Success</button>
-    <button type="button" class="btn btn-danger">Danger</button>
-    <button type="button" class="btn btn-warning">Warning</button>
-    <button type="button" class="btn btn-info">Info</button>
-    <button type="button" class="btn btn-light">Light</button>
-    <button type="button" class="btn btn-dark">Dark</button>
 </main>
-
-
-
 
 
 </body>
